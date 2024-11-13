@@ -1,0 +1,29 @@
+import { useQuery } from '@tanstack/react-query'
+import api from '../../api/jikan'
+import { ApiResponse } from '../../types/api'
+import { Anime } from '../../types/api'
+
+export type AnimeResponse = ApiResponse<Anime[]>
+
+interface getProps {
+  query: string
+}
+
+export default function useGetAllAnime({ query }: getProps) {
+  const {
+    data: animeData,
+    isLoading,
+    error
+  } = useQuery<AnimeResponse>({
+    queryKey: ['anime'],
+    queryFn: async () => {
+      const { data } = await api.get<AnimeResponse>(`/anime?q=${query}`, {})
+      return data
+    },
+    enabled: !!query,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: true
+  })
+
+  return { animeData, isLoading, error }
+}

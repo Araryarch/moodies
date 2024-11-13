@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 23% 95%;
+    --foreground: 234 16% 35%;
+    --card: 220 23% 95%;
+    --card-foreground: 234 16% 35%;
+    --popover: 220 23% 95%;
+    --popover-foreground: 234 16% 35%;
+    --primary: 316 72% 86%;
+    --primary-foreground: 316 72% 26%;
+    --secondary: 204 71% 81%;
+    --secondary-foreground: 234 16% 35%;
+    --muted: 220 16% 90%;
+    --muted-foreground: 234 16% 45%;
+    --accent: 261 73% 85%;
+    --accent-foreground: 234 16% 35%;
+    --destructive: 343 81% 75%;
+    --destructive-foreground: 234 16% 35%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 316 72% 86%;
+    --radius: 0.5rem;
+    /* Chart colors */
+    --chart-1: 316 72% 86%; /* Pink */
+    --chart-2: 204 71% 81%; /* Blue */
+    --chart-3: 261 73% 85%; /* Mauve */
+    --chart-4: 189 71% 73%; /* Teal */
+    --chart-5: 168 67% 74%; /* Green */
+  }
+
+  .dark {
+    /* Catppuccin Mocha */
+    --background: 240 21% 15%;
+    --foreground: 226 64% 88%;
+    --card: 240 21% 15%;
+    --card-foreground: 226 64% 88%;
+    --popover: 240 21% 15%;
+    --popover-foreground: 226 64% 88%;
+    --primary: 267 84% 81%;
+    --primary-foreground: 240 21% 15%;
+    --secondary: 240 24% 24%;
+    --secondary-foreground: 226 64% 88%;
+    --muted: 240 24% 24%;
+    --muted-foreground: 226 64% 78%;
+    --accent: 240 24% 24%;
+    --accent-foreground: 226 64% 88%;
+    --destructive: 343 81% 75%;
+    --destructive-foreground: 226 64% 88%;
+    --border: 240 24% 24%;
+    --input: 240 24% 24%;
+    --ring: 267 84% 81%;
+    /* Chart colors */
+    --chart-1: 316 72% 86%; /* Pink */
+    --chart-2: 204 71% 81%; /* Blue */
+    --chart-3: 261 73% 85%; /* Mauve */
+    --chart-4: 189 71% 73%; /* Teal */
+    --chart-5: 168 67% 74%; /* Green */
+  }
+}
