@@ -75,6 +75,11 @@ const Ai: React.FC = () => {
           type='text'
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              handleSubmit()
+            }
+          }}
           placeholder={
             isFirstMessage ? 'Ketik pesan pertama Anda...' : 'Type a message'
           }
