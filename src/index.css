@@ -30,7 +30,6 @@
     --chart-4: 40 80% 70%;
     --chart-5: 10 70% 50%;
   }
-
   .dark {
     --background: 223 16% 8%;
     --foreground: 210 20% 90%;
@@ -40,7 +39,7 @@
     --popover-foreground: 210 20% 90%;
     --primary: 210 70% 45%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 210 20% 20%;
+    --secondary: 225 21% 11%;
     --secondary-foreground: 240 5% 82%;
     --muted: 0 0% 30%;
     --muted-foreground: 210 20% 80%;

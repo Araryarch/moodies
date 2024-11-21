@@ -15,6 +15,7 @@ import useGetMoodManga from './hooks/useGetMoodManga'
 import { Manga, Anime, ApiResponse } from '../types/api'
 import { cn } from '../lib/utils'
 import Card from './components/Molecules/Card'
+import BentoGridThirdDemo from './components/About'
 
 const CardSkeleton: React.FC = () => (
   <div className='flex w-[24rem] card aspect-video bg-secondary rounded-xl animate-pulse'></div>
@@ -122,7 +123,7 @@ const LandingPage: React.FC = () => {
     >
       <Navbar />
       <AiModal />
-
+      {/* Hero */}
       <div className='relative flex items-center w-full min-h-screen'>
         <div className='flex flex-col items-start max-w-xl gap-6 pl-10'>
           <h1 className='font-bold text-8xl'>MOODIES.</h1>
@@ -171,6 +172,9 @@ const LandingPage: React.FC = () => {
             )}
           </div>
         </div>
+      </div>
+      <div className='flex flex-col items-center justify-center w-full min-h-screen gap-5 bg-secondary'>
+        <BentoGridThirdDemo />
       </div>
     </main>
   )
