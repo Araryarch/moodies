@@ -5,6 +5,7 @@ import { FaDiscord, FaInstagram, FaReddit } from 'react-icons/fa'
 import { FaX } from 'react-icons/fa6'
 import { IoChatbubbles } from 'react-icons/io5'
 import Tooltips from '../Tooltips'
+import { useNavigate } from 'react-router-dom'
 
 import { cn } from '../../../lib/utils'
 
@@ -115,6 +116,8 @@ const Navbar = () => {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
+  const navigate = useNavigate()
+
   return (
     <nav
       className={cn(
@@ -161,16 +164,25 @@ const Navbar = () => {
         </Tooltips>
       </div>
       <div className='items-center justify-center hidden gap-5 text-sm font-medium features-list md:hidden xl:flex'>
-        <div className='flex flex-col items-center justify-center cursor-pointer'>
+        <div
+          className='flex flex-col items-center justify-center cursor-pointer'
+          onClick={() => navigate('/anime')}
+        >
           <TvMinimalPlayIcon size={30} />
           <p>Anime</p>
         </div>
         <div className='flex flex-col items-center justify-center cursor-pointer'>
-          <LibraryBig size={30} />
+          <LibraryBig
+            size={30}
+            onClick={() => navigate('/manga')}
+          />
           <p>Manga</p>
         </div>
         <div className='flex flex-col items-center justify-center cursor-pointer'>
-          <IoChatbubbles size={30} />
+          <IoChatbubbles
+            size={30}
+            onClick={() => navigate('/community')}
+          />
           <p>Community</p>
         </div>
       </div>
