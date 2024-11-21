@@ -190,16 +190,15 @@ const LandingPage = () => {
           </button>
         </div>
 
-        {/* Recommendation Section */}
         <div className='flex flex-col items-end justify-center w-full min-h-screen gap-5'>
           <h1 className='px-5'>
             Personalized Recommendations Based on Your Current Mood
             <span className='px-4 py-2 ml-2 font-bold uppercase bg-secondary text-destructive-foreground rounded-xl'>
-              {mood}
+              {mood ? mood : 'BAIK'}
             </span>
           </h1>
 
-          <div className='grid w-full grid-cols-2 gap-y-5 card-wrapper place-items-end'>
+          <div className='flex flex-wrap justify-end w-full grid-cols-2 gap-5 gap-y-5 card-wrapper'>
             {loading ||
             (displayedAnime.length === 0 && displayedManga.length === 0) ? (
               Array.from({ length: 4 }).map((_, index) => (
@@ -227,7 +226,6 @@ const LandingPage = () => {
         </div>
       </div>
 
-      {/* Additional Lists Section */}
       <div className='w-full min-h-screen p-10 bg-secondary text-secondary-foreground'>
         <AnimeList data={animes} />
         <MangaList data={mangas} />
