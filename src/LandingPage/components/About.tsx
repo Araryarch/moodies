@@ -193,10 +193,10 @@ const SkeletonFour = () => {
           className='w-10 h-10 rounded-full'
         />
         <p className='mt-4 text-xs font-semibold text-center sm:text-sm text-neutral-500'>
-          Just code in Vanilla Javascript
+          I think i just be better after use this website
         </p>
         <p className='border border-red-500 bg-red-100 dark:bg-red-900/20 text-red-600 text-xs rounded-full px-2 py-0.5 mt-4'>
-          Delusional
+          Marah
         </p>
       </motion.div>
       <motion.div className='h-full relative z-20 w-1/3 rounded-2xl bg-white p-4 dark:bg-black dark:border-white/[0.1] border border-neutral-200 flex flex-col items-center justify-center'>
@@ -208,10 +208,10 @@ const SkeletonFour = () => {
           className='w-10 h-10 rounded-full'
         />
         <p className='mt-4 text-xs font-semibold text-center sm:text-sm text-neutral-500'>
-          Tailwind CSS is cool, you know
+          I Love this website this is so cool
         </p>
         <p className='border border-green-500 bg-green-100 dark:bg-green-900/20 text-green-600 text-xs rounded-full px-2 py-0.5 mt-4'>
-          Sensible
+          Senang
         </p>
       </motion.div>
       <motion.div
@@ -226,10 +226,10 @@ const SkeletonFour = () => {
           className='w-10 h-10 rounded-full'
         />
         <p className='mt-4 text-xs font-semibold text-center sm:text-sm text-neutral-500'>
-          I love angular, RSC, and Redux.
+          I love Anime as specialy one piece
         </p>
         <p className='border border-orange-500 bg-orange-100 dark:bg-orange-900/20 text-orange-600 text-xs rounded-full px-2 py-0.5 mt-4'>
-          Helpless
+          Baik
         </p>
       </motion.div>
     </motion.div>
@@ -279,26 +279,26 @@ const SkeletonFive = () => {
           className='w-10 h-10 rounded-full'
         />
         <p className='text-xs text-neutral-500'>
-          There are a lot of cool framerworks out there like React, Angular,
-          Vue, Svelte that can make your life ....
+          There a lot of anime that u can watch the trailer or manga that you can read the synopsys.
         </p>
       </motion.div>
       <motion.div
         variants={variantsSecond}
         className='flex flex-row rounded-full border border-neutral-100 dark:border-white/[0.2] p-2 items-center justify-end space-x-2 w-3/4 ml-auto bg-white dark:bg-black'
       >
-        <p className='text-xs text-neutral-500'>Use PHP.</p>
+        <p className='text-xs text-neutral-500'>One Piece is Real ?</p>
         <div className='flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-r from-pink-500 to-violet-500' />
       </motion.div>
     </motion.div>
   )
 }
+
 const items = [
   {
-    title: 'AI Content Generation',
+    title: 'Mood-based Anime Recommendations',
     description: (
       <span className='text-sm'>
-        Experience the power of AI in generating unique content.
+        Let our AI chatbot analyze your mood and recommend the perfect anime.
       </span>
     ),
     header: <SkeletonOne />,
@@ -306,10 +306,10 @@ const items = [
     icon: <IconClipboardCopy className='w-4 h-4 text-neutral-500' />
   },
   {
-    title: 'Automated Proofreading',
+    title: 'Personalized Anime Suggestions',
     description: (
       <span className='text-sm'>
-        Let AI handle the proofreading of your documents.
+        Our AI provides anime suggestions tailored to how you're feeling.
       </span>
     ),
     header: <SkeletonTwo />,
@@ -317,10 +317,10 @@ const items = [
     icon: <IconFileBroken className='w-4 h-4 text-neutral-500' />
   },
   {
-    title: 'Contextual Suggestions',
+    title: 'Contextual Anime Discovery',
     description: (
       <span className='text-sm'>
-        Get AI-powered suggestions based on your writing context.
+        Based on your mood, our AI curates anime that fits your emotional vibe.
       </span>
     ),
     header: <SkeletonThree />,
@@ -328,10 +328,11 @@ const items = [
     icon: <IconSignature className='w-4 h-4 text-neutral-500' />
   },
   {
-    title: 'Sentiment Analysis',
+    title: 'Sentiment-Driven Anime Picks',
     description: (
       <span className='text-sm'>
-        Understand the sentiment of your text with AI analysis.
+        Understand your mood better and discover anime that matches your
+        sentiment.
       </span>
     ),
     header: <SkeletonFour />,
@@ -340,10 +341,11 @@ const items = [
   },
 
   {
-    title: 'Text Summarization',
+    title: 'Instant Mood Analysis',
     description: (
       <span className='text-sm'>
-        Summarize your lengthy documents with AI technology.
+        Our chatbot instantly analyzes your mood to provide anime that suits how
+        you feel.
       </span>
     ),
     header: <SkeletonFive />,
