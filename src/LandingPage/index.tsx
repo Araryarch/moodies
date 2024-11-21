@@ -134,7 +134,8 @@ const LandingPage: React.FC = () => {
             and vibe like a true weeb! 🎉
           </p>
           <button className='px-4 py-2 border-[1px] flex gap-2 text-xl items-center group hover:gap-5 transition-all duration-300 ease-in-out'>
-            <ArrowUpRight className='group-hover:rotate-45' /> TRY NOW
+            <ArrowUpRight className='duration-1000 group-hover:rotate-45' /> TRY
+            NOW
           </button>
         </div>
 
