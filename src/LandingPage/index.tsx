@@ -128,7 +128,7 @@ const LandingPage: React.FC = () => {
     >
       <Navbar />
       <AiModal />
-      <div className='relative flex items-center w-full min-h-screen'>
+      <div className='relative flex items-center w-full min-h-screen overflow-hidden'>
         <div className='flex flex-col items-start max-w-xl gap-6 pl-10'>
           <h1 className='font-bold text-8xl'>
             MOODIES<span className='text-destructive'>.</span>
