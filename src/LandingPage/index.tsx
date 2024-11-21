@@ -5,7 +5,6 @@ import AiModal from '../components/ui/ai-modal'
 import Navbar from '../components/ui/Navbar'
 import AnimeList from './components/anime-list'
 import MangaList from './components/manga-list'
-import MoodList from './components/mood-list'
 
 import { useFilteredDataStore } from '../lib/useFilteredData'
 import useGetAllAnime from './hooks/useGetAllAnime'
@@ -21,7 +20,6 @@ const CardSkeleton: React.FC = () => (
   <div className='flex w-[24rem] card aspect-video bg-secondary rounded-xl animate-pulse'></div>
 )
 
-// Media Card Component with improved typing and error handling
 interface MediaCardProps {
   item: Anime | Manga
   type: 'anime' | 'manga'
@@ -78,9 +76,7 @@ const MediaCard: React.FC<MediaCardProps> = ({ item, type }) => {
   )
 }
 
-// Main Landing Page Component
 const LandingPage: React.FC = () => {
-  // Mood to Genre Mapping
   const moodToGenreMap = useMemo(
     () => ({
       baik: '8,36',
@@ -92,13 +88,11 @@ const LandingPage: React.FC = () => {
     []
   )
 
-  // State Management
   const [mood, setMood] = useState<string>('baik')
   const [genre, setGenre] = useState<string>('')
   const [startIndex, setStartIndex] = useState(0)
   const [loading, setLoading] = useState(false)
 
-  // Filtered Data from Store
   const filteredAnimeData = useFilteredDataStore(
     (state) => state.filteredAnimeData
   )
@@ -106,7 +100,6 @@ const LandingPage: React.FC = () => {
     (state) => state.filteredMangaData
   )
 
-  // Data Fetching Hooks
   const { animeData }: { animeData?: ApiResponse<Anime[]> } = useGetAllAnime({
     searchTerm: ''
   })
@@ -116,7 +109,6 @@ const LandingPage: React.FC = () => {
   const { moodAnime } = useGetMoodAnime({ genre })
   const { moodManga } = useGetMoodManga({ genre })
 
-  // Update Mood from localStorage
   const updateMood = useCallback(() => {
     const storedMood = localStorage.getItem('mood') || 'baik'
     if (storedMood !== mood) {
@@ -241,10 +233,6 @@ const LandingPage: React.FC = () => {
       <div className='w-full min-h-screen p-10 bg-secondary text-secondary-foreground'>
         <AnimeList data={animes} />
         <MangaList data={mangas} />
-        <MoodList
-          animes={moodAnime?.data}
-          mangas={moodManga?.data}
-        />
       </div>
     </main>
   )

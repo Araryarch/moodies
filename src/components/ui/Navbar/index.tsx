@@ -117,7 +117,7 @@ const Navbar = () => {
         className='cursor-pointer xl:hidden'
         onClick={() => setIsSidebar(true)}
       />
-      <h1 className='hidden text-2xl font-bold uppercase xl:flex'>Moodies.</h1>
+      <h1 className='hidden text-xl font-bold uppercase xl:flex'>Moodies.</h1>
       <form
         className='relative flex items-center w-full max-w-xl gap-3 p-2 rounded-lg shadow-md bg-card'
         onSubmit={onSubmit}
@@ -126,7 +126,7 @@ const Navbar = () => {
           type='text'
           placeholder={placeholders[placeholderIndex]}
           ref={inputRef}
-          className='w-full px-4 py-2 text-sm bg-transparent border-none outline-none text-primary'
+          className='w-full px-2 py-1 text-sm bg-transparent border-none outline-none text-primary'
           onKeyDown={handleKeyDown}
         />
         <button
@@ -150,7 +150,7 @@ const Navbar = () => {
           <FaReddit size={20} />
         </Tooltips>
       </div>
-      <div className='items-center justify-center hidden gap-5 font-medium features-list md:hidden xl:flex'>
+      <div className='items-center justify-center hidden gap-5 text-sm font-medium features-list md:hidden xl:flex'>
         <div className='flex flex-col items-center justify-center cursor-pointer'>
           <TvMinimalPlayIcon size={30} />
           <p>Anime</p>
@@ -165,10 +165,10 @@ const Navbar = () => {
         </div>
       </div>
       <div className='items-center justify-center hidden gap-2 ml-28 auth xl:flex'>
-        <button className='px-4 py-2 rounded-md shadow-2xl bg-card hover:bg-muted text-card-foreground'>
+        <button className='px-4 py-2 rounded-md shadow-2xl bg-secondary hover:bg-muted text-card-foreground'>
           Register
         </button>
-        <button className='px-4 py-2 rounded-md shadow-2xl bg-card hover:bg-muted text-card-foreground'>
+        <button className='px-4 py-2 rounded-md shadow-2xl bg-secondary hover:bg-muted text-card-foreground'>
           Login
         </button>
       </div>
