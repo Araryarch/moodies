@@ -17,8 +17,13 @@ import { cn } from '../lib/utils'
 import Card from './components/Molecules/Card'
 import BentoGridThirdDemo from './components/About'
 
-const CardSkeleton: React.FC = () => (
-  <div className='flex w-[24rem] card aspect-video bg-secondary rounded-xl animate-pulse'></div>
+const CardSkeleton: React.FC<{ classname: string }> = ({ classname }) => (
+  <div
+    className={cn(
+      'flex w-[24rem] card aspect-video bg-secondary rounded-xl animate-pulse',
+      classname
+    )}
+  ></div>
 )
 
 const LandingPage: React.FC = () => {
@@ -123,10 +128,11 @@ const LandingPage: React.FC = () => {
     >
       <Navbar />
       <AiModal />
-      {/* Hero */}
       <div className='relative flex items-center w-full min-h-screen'>
         <div className='flex flex-col items-start max-w-xl gap-6 pl-10'>
-          <h1 className='font-bold text-8xl'>MOODIES.</h1>
+          <h1 className='font-bold text-8xl'>
+            MOODIES<span className='text-destructive'>.</span>
+          </h1>
           <p className='font-medium'>
             Moodies is your go-to app for anime that fits your vibe! Feeling
             happy, sad, hyped, chill, or romantic? Just pick a mood, and let
@@ -151,7 +157,10 @@ const LandingPage: React.FC = () => {
             {loading ||
             (displayedAnime.length === 0 && displayedManga.length === 0) ? (
               Array.from({ length: 4 }).map((_, index) => (
-                <CardSkeleton key={index} />
+                <CardSkeleton
+                  key={index}
+                  classname={index < 2 ? 'mr-[-10px]' : 'ml-[-10px]'}
+                />
               ))
             ) : (
               <>

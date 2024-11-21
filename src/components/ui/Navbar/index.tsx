@@ -117,7 +117,9 @@ const Navbar = () => {
         className='cursor-pointer xl:hidden'
         onClick={() => setIsSidebar(true)}
       />
-      <h1 className='hidden text-xl font-bold uppercase xl:flex'>Moodies.</h1>
+      <h1 className='hidden text-xl font-bold uppercase xl:flex'>
+        Moodies<span className='text-destructive'>.</span>
+      </h1>
       <form
         className='relative flex items-center w-full max-w-xl gap-3 p-2 rounded-lg shadow-md bg-card'
         onSubmit={onSubmit}
