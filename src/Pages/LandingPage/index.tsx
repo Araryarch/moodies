@@ -89,6 +89,7 @@ const LandingPage: React.FC = () => {
     if (animeData?.data) {
       const animeList =
         filteredAnimeData.length > 0 ? filteredAnimeData : animeData.data
+      console.log('Setting animes in Zustand:', animeList)
       setAnimes(animeList)
     }
   }, [animeData, filteredAnimeData, setAnimes])
@@ -97,6 +98,7 @@ const LandingPage: React.FC = () => {
     if (mangaData?.data) {
       const mangaList =
         filteredMangaData.length > 0 ? filteredMangaData : mangaData.data
+      console.log('Setting mangas in Zustand:', mangaList)
       setMangas(mangaList)
     }
   }, [mangaData, filteredMangaData, setMangas])
@@ -252,7 +254,11 @@ const LandingPage: React.FC = () => {
           />
         </ContainerScroll>
       </div>
-      <div className='flex flex-col items-center justify-center w-full gap-5 p-5 bg-secondary'>
+      <div className='flex-col items-center justify-center hidden w-full gap-5 p-5 overflow-hidden xl:flex bg-secondary'>
+        <HeroParallax
+          animeProducts={moodAnime?.data || []}
+          mangaProducts={moodManga?.data || []}
+        />
         <h1 className='text-4xl font-bold uppercase'>Testimonials</h1>
         <InfiniteMovingCards
           items={testimonials}
@@ -260,10 +266,11 @@ const LandingPage: React.FC = () => {
           speed='slow'
         />
       </div>
-      <div className='w-full gap-5 p-5 text-xs uppercase bg-background'>
+      <div className='flex justify-between w-full gap-5 p-5 text-xs uppercase bg-background'>
         <a href='https://github.com/Araryarch/Moodies'>
-          <h1>moodies</h1>
+          <h1>moodies: 2024</h1>
         </a>
+        <h1>BY: Ararya</h1>
       </div>
     </main>
   )

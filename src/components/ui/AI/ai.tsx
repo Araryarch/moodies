@@ -102,13 +102,13 @@ const Ai = () => {
             placeholder={
               isFirstMessage ? 'Ketik pesan pertama Anda...' : 'Type a message'
             }
-            className='flex-1 p-3 pr-16 text-white rounded-lg resize-none placeholder-muted-foreground bg-input focus:outline-none'
+            className='flex-1 p-3 pr-16 text-black rounded-lg resize-none dark:text-white placeholder-muted-foreground bg-input focus:outline-none'
             rows={1}
             style={{ overflowY: 'hidden' }}
           />
           <button
             onClick={handleSubmit}
-            className='absolute px-4 py-2 font-semibold text-white transition-all duration-200 ease-in-out transform -translate-y-1/2 rounded-lg dark:text-black right-1 top-1/2 bg-secondary focus:outline-none'
+            className='absolute px-4 py-2 font-semibold text-black transition-all duration-200 ease-in-out transform -translate-y-1/2 rounded-lg dark:text-white right-1 top-1/2 bg-secondary focus:outline-none'
           >
             Send
           </button>
