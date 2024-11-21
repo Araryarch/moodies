@@ -17,6 +17,10 @@ import { cn } from '../lib/utils'
 import Card from './components/Molecules/Card'
 import BentoGridThirdDemo from './components/About'
 import { HeroParallax } from './components/ui/hero-parallax'
+import { ContainerScroll } from './components/ui/container-scroll-animation'
+
+import moodies from '../assets/images/moodies.png'
+import { InfiniteMovingCards } from './components/ui/infinite-moving-cards'
 
 const CardSkeleton: React.FC<{ classname: string }> = ({ classname }) => (
   <div
@@ -121,6 +125,38 @@ const LandingPage: React.FC = () => {
   const displayedManga =
     moodManga?.data?.slice(startIndex, startIndex + 2) || []
 
+  const testimonials = [
+    {
+      quote:
+        'It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of Light, it was the season of Darkness, it was the spring of hope, it was the winter of despair.',
+      name: 'Charles Dickens',
+      title: 'A Tale of Two Cities'
+    },
+    {
+      quote:
+        "To be, or not to be, that is the question: Whether 'tis nobler in the mind to suffer The slings and arrows of outrageous fortune, Or to take Arms against a Sea of troubles, And by opposing end them: to die, to sleep.",
+      name: 'William Shakespeare',
+      title: 'Hamlet'
+    },
+    {
+      quote: 'All that we see or seem is but a dream within a dream.',
+      name: 'Edgar Allan Poe',
+      title: 'A Dream Within a Dream'
+    },
+    {
+      quote:
+        'It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife.',
+      name: 'Jane Austen',
+      title: 'Pride and Prejudice'
+    },
+    {
+      quote:
+        'Call me Ishmael. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would sail about a little and see the watery part of the world.',
+      name: 'Herman Melville',
+      title: 'Moby-Dick'
+    }
+  ]
+
   return (
     <main
       className={cn(
@@ -192,6 +228,42 @@ const LandingPage: React.FC = () => {
       </div>
       <div className='flex flex-col items-center justify-center w-full min-h-screen gap-5 p-5 bg-secondary'>
         <BentoGridThirdDemo />
+      </div>
+      <div className='w-full min-h-screen p-5 bg-background'>
+        <ContainerScroll
+          titleComponent={
+            <>
+              <h1 className='text-4xl font-semibold text-black uppercase dark:text-white'>
+                Modern Design and Stunning <br />
+                <span className='text-4xl md:text-[6rem] font-bold mt-1 leading-none'>
+                  MOODIES
+                </span>
+              </h1>
+            </>
+          }
+        >
+          <img
+            src={moodies}
+            alt='hero'
+            height={720}
+            width={1400}
+            className='object-cover object-left-top h-full mx-auto rounded-2xl'
+            draggable={false}
+          />
+        </ContainerScroll>
+      </div>
+      <div className='flex flex-col items-center justify-center w-full gap-5 p-5 bg-secondary'>
+        <h1 className='text-4xl font-bold uppercase'>Testimonials</h1>
+        <InfiniteMovingCards
+          items={testimonials}
+          direction='right'
+          speed='slow'
+        />
+      </div>
+      <div className='w-full gap-5 p-5 text-xs uppercase bg-background'>
+        <a href='https://github.com/Araryarch/Moodies'>
+          <h1>moodies</h1>
+        </a>
       </div>
     </main>
   )
