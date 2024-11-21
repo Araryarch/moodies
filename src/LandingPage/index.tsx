@@ -3,10 +3,10 @@ import { ArrowUpRight } from 'lucide-react'
 
 import AiModal from '../components/ui/ai-modal'
 import Navbar from '../components/ui/Navbar'
-import AnimeList from './components/anime-list'
-import MangaList from './components/manga-list'
 
 import { useFilteredDataStore } from '../lib/useFilteredData'
+import { useAnimeMangaStore } from '../lib/useAnimeMangaStore'
+
 import useGetAllAnime from './hooks/useGetAllAnime'
 import useGetAllManga from './hooks/useGetAllManga'
 import useGetMoodAnime from './hooks/useGetMoodAnime'
@@ -14,67 +14,11 @@ import useGetMoodManga from './hooks/useGetMoodManga'
 
 import { Manga, Anime, ApiResponse } from '../types/api'
 import { cn } from '../lib/utils'
+import Card from './components/Molecules/Card'
 
-// Card Skeleton for loading state
 const CardSkeleton: React.FC = () => (
   <div className='flex w-[24rem] card aspect-video bg-secondary rounded-xl animate-pulse'></div>
 )
-
-interface MediaCardProps {
-  item: Anime | Manga
-  type: 'anime' | 'manga'
-  rating?: number
-}
-
-const MediaCard: React.FC<MediaCardProps> = ({ item, type }) => {
-  const renderGenres = () => {
-    const genres = item.genres.slice(0, 2)
-    return (
-      <div className='flex gap-3 py-2'>
-        {genres.map((genre) => (
-          <span
-            key={genre.name}
-            className='px-2 py-1 text-sm rounded bg-secondary'
-          >
-            {genre.name}
-          </span>
-        ))}
-        {item.genres.length > 2 && (
-          <span className='px-2 py-1 text-sm rounded bg-secondary'>
-            +{item.genres.length - 2}
-          </span>
-        )}
-      </div>
-    )
-  }
-
-  const imageUrl =
-    type === 'anime'
-      ? (item as Anime).images.jpg.large_image_url
-      : (item as Manga).images.jpg.large_image_url
-
-  return (
-    <div className='relative flex w-[24rem] card aspect-video border-2 border-secondary overflow-hidden rounded-xl cursor-pointer'>
-      <img
-        src={imageUrl}
-        alt={item.title}
-        className='object-cover w-full h-full rounded-xl'
-      />
-      <div className='absolute inset-0 transition-all duration-300 ease-in-out bg-black/30 hover:bg-black/50'>
-        <div className='absolute px-2 py-1 text-white rounded-md top-2 left-2 bg-secondary/80'>
-          Rank: {item.rank || 'N/A'}
-        </div>
-        <div className='absolute bottom-0 left-0 right-0 p-4 text-white bg-gradient-to-t from-black/70 to-transparent'>
-          <h2 className='text-lg font-bold'>{item.title}</h2>
-          {renderGenres()}
-          <p className='text-sm line-clamp-2'>
-            {item.synopsis.substring(0, 100)}...
-          </p>
-        </div>
-      </div>
-    </div>
-  )
-}
 
 const LandingPage: React.FC = () => {
   const moodToGenreMap = useMemo(
@@ -109,6 +53,8 @@ const LandingPage: React.FC = () => {
   const { moodAnime } = useGetMoodAnime({ genre })
   const { moodManga } = useGetMoodManga({ genre })
 
+  const { setAnimes, setMangas } = useAnimeMangaStore()
+
   const updateMood = useCallback(() => {
     const storedMood = localStorage.getItem('mood') || 'baik'
     if (storedMood !== mood) {
@@ -116,33 +62,34 @@ const LandingPage: React.FC = () => {
     }
   }, [mood])
 
-  // Effect to update genre based on mood
   useEffect(() => {
     if (mood && moodToGenreMap[mood as keyof typeof moodToGenreMap]) {
       setGenre(moodToGenreMap[mood as keyof typeof moodToGenreMap])
     }
   }, [mood, moodToGenreMap])
 
-  // Effect to monitor mood changes
   useEffect(() => {
     updateMood()
     const interval = setInterval(updateMood, 2000)
     return () => clearInterval(interval)
   }, [updateMood])
 
-  // Memoized Data
-  const animes = useMemo(
-    () =>
-      filteredAnimeData.length > 0 ? filteredAnimeData : animeData?.data || [],
-    [filteredAnimeData, animeData]
-  )
-  const mangas = useMemo(
-    () =>
-      filteredMangaData.length > 0 ? filteredMangaData : mangaData?.data || [],
-    [filteredMangaData, mangaData]
-  )
+  useEffect(() => {
+    if (animeData?.data) {
+      const animeList =
+        filteredAnimeData.length > 0 ? filteredAnimeData : animeData.data
+      setAnimes(animeList)
+    }
+  }, [animeData, filteredAnimeData, setAnimes])
 
-  // Effect for mood anime/manga rotation
+  useEffect(() => {
+    if (mangaData?.data) {
+      const mangaList =
+        filteredMangaData.length > 0 ? filteredMangaData : mangaData.data
+      setMangas(mangaList)
+    }
+  }, [mangaData, filteredMangaData, setMangas])
+
   useEffect(() => {
     const interval = setInterval(() => {
       if (moodAnime?.data || moodManga?.data) {
@@ -162,7 +109,6 @@ const LandingPage: React.FC = () => {
     return () => clearInterval(interval)
   }, [startIndex, moodAnime?.data, moodManga?.data])
 
-  // Sliced Mood Data
   const displayedAnime =
     moodAnime?.data?.slice(startIndex, startIndex + 2) || []
   const displayedManga =
@@ -178,7 +124,6 @@ const LandingPage: React.FC = () => {
       <AiModal />
 
       <div className='relative flex items-center w-full min-h-screen'>
-        {/* Left Side Content */}
         <div className='flex flex-col items-start max-w-xl gap-6 pl-10'>
           <h1 className='font-bold text-8xl'>MOODIES.</h1>
           <p className='font-medium'>
@@ -192,16 +137,15 @@ const LandingPage: React.FC = () => {
           </button>
         </div>
 
-        {/* Right Side Content */}
         <div className='flex flex-col items-end justify-center w-full min-h-screen gap-5'>
           <h1 className='px-5'>
             Personalized Recommendations Based on Your Current Mood
-            <span className='px-4 py-2 ml-2 font-bold uppercase bg-secondary text-destructive-foreground rounded-xl'>
+            <span className='px-4 py-2 ml-2 font-bold uppercase bg-secondary text-secondary-foreground rounded-xl'>
               {mood || 'BAIK'}
             </span>
           </h1>
 
-          <div className='flex flex-wrap justify-end w-full grid-cols-2 gap-5 gap-y-5 card-wrapper'>
+          <div className='flex flex-wrap justify-end w-full gap-5 card-wrapper min-h-[60vh]'>
             {loading ||
             (displayedAnime.length === 0 && displayedManga.length === 0) ? (
               Array.from({ length: 4 }).map((_, index) => (
@@ -210,14 +154,14 @@ const LandingPage: React.FC = () => {
             ) : (
               <>
                 {displayedAnime.map((anime: Anime) => (
-                  <MediaCard
+                  <Card
                     key={anime.mal_id}
                     item={anime}
                     type='anime'
                   />
                 ))}
                 {displayedManga.map((manga: Manga) => (
-                  <MediaCard
+                  <Card
                     key={manga.mal_id}
                     item={manga}
                     type='manga'
@@ -227,12 +171,6 @@ const LandingPage: React.FC = () => {
             )}
           </div>
         </div>
-      </div>
-
-      {/* Additional Lists Section */}
-      <div className='w-full min-h-screen p-10 bg-secondary text-secondary-foreground'>
-        <AnimeList data={animes} />
-        <MangaList data={mangas} />
       </div>
     </main>
   )
