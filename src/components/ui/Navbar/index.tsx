@@ -1,22 +1,25 @@
 import { useState, useEffect, useRef } from 'react'
-import { LibraryBig, Menu, TvMinimalPlayIcon } from 'lucide-react'
+import { LibraryBig, TvMinimalPlayIcon } from 'lucide-react'
+import Menu from './components/Menu'
 import { FaDiscord, FaInstagram, FaReddit } from 'react-icons/fa'
 import { FaX } from 'react-icons/fa6'
 import { IoChatbubbles } from 'react-icons/io5'
 import Tooltips from '../Tooltips'
-import Sidebar from './components/sidebar'
+
 import { cn } from '../../../lib/utils'
 
 import ToggleTheme from './components/toggletheme'
 import useGetAllAnime from '../../../LandingPage/hooks/useGetAllAnime'
 import { useFilteredDataStore } from '../../../lib/useFilteredData'
 import useGetAllManga from '../../../LandingPage/hooks/useGetAllManga'
+import Topbar from './components/topbar'
 
 const Navbar = () => {
-  const [isSidebar, setIsSidebar] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
   const [placeholderIndex, setPlaceholderIndex] = useState(0)
+  const [isNavbar, setIsNavbar] = useState(false)
+  const [isXL, setIsXL] = useState(false) // Track if screen is XL or larger
 
   const { animeData } = useGetAllAnime({ searchTerm })
   const { mangaData } = useGetAllManga({ searchTerm })
@@ -27,6 +30,11 @@ const Navbar = () => {
   const setMangaFilteredData = useFilteredDataStore(
     (state) => state.setMangaFilteredData
   )
+
+  const handleClick = (props: boolean) => {
+    console.log('clicked', props)
+    setIsNavbar(props)
+  }
 
   const placeholders = [
     'Siapa sih Imu Sama di One Piece?',
@@ -44,24 +52,21 @@ const Navbar = () => {
 
   useEffect(() => {
     if (searchTerm) {
-      // Filter anime data secara lengkap (bukan hanya judul)
       const filteredAnimeData =
         animeData?.data.filter((animeItem) =>
           animeItem.title.toLowerCase().includes(searchTerm)
         ) || []
 
-      // Filter manga data secara lengkap (bukan hanya judul)
       const filteredMangaData =
         mangaData?.data.filter((mangaItem) =>
           mangaItem.title.toLowerCase().includes(searchTerm)
         ) || []
 
-      // Simpan objek yang sudah difilter
       setAnimeFilteredData(filteredAnimeData)
       setMangaFilteredData(filteredMangaData)
     } else {
-      setAnimeFilteredData([]) // Clear jika searchTerm kosong
-      setMangaFilteredData([]) // Clear jika searchTerm kosong
+      setAnimeFilteredData([])
+      setMangaFilteredData([])
     }
   }, [
     searchTerm,
@@ -70,10 +75,6 @@ const Navbar = () => {
     setAnimeFilteredData,
     setMangaFilteredData
   ])
-
-  const handleCloseSidebar = () => {
-    setIsSidebar(false)
-  }
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -105,23 +106,30 @@ const Navbar = () => {
     }
   }
 
+  useEffect(() => {
+    const handleResize = () => {
+      setIsXL(window.innerWidth >= 1280) // Set to true if the window width is XL (>= 1280px)
+    }
+    handleResize() // Check the initial window size
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   return (
     <nav
       className={cn(
-        'z-50 flex items-center justify-between w-full gap-8 px-5 py-4 transition-all duration-300 ease-in-out backdrop-blur-[100px] xl:justify-around fixed text-foreground'
+        'z-50 flex items-center justify-between w-full gap-8 px-5 xl:py-4 py-2 transition-all duration-300 ease-in-out backdrop-blur-[100px] xl:justify-around fixed text-foreground',
+        isNavbar && !isXL ? 'h-screen items-start p-5 fixed' : ''
       )}
     >
       <ToggleTheme />
-      <Menu
-        size={30}
-        className='cursor-pointer xl:hidden'
-        onClick={() => setIsSidebar(true)}
-      />
-      <h1 className='hidden text-xl font-bold uppercase xl:flex'>
+      <h1 className='text-xl font-bold uppercase xl:flex'>
         Moodies<span className='text-destructive'>.</span>
       </h1>
+      <Menu data={handleClick} />
+      {isNavbar && <Topbar />}
       <form
-        className='relative flex items-center w-full max-w-xl gap-3 p-2 rounded-lg shadow-md bg-card'
+        className='relative items-center hidden w-full max-w-xl gap-3 p-2 rounded-lg shadow-md xl:flex bg-card'
         onSubmit={onSubmit}
       >
         <input
@@ -174,10 +182,6 @@ const Navbar = () => {
           Login
         </button>
       </div>
-      <Sidebar
-        classname={`${isSidebar ? 'ml-0 xl:-ml-96' : '-ml-96'}`}
-        onClose={handleCloseSidebar}
-      />
     </nav>
   )
 }

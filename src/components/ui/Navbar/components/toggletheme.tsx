@@ -1,5 +1,6 @@
 import { CloudMoon, Sun } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { cn } from '../../../../lib/utils'
 
 const ToggleTheme = () => {
   const [isDarkMode, setIsDarkMode] = useState(true)
@@ -33,7 +34,7 @@ const ToggleTheme = () => {
   return (
     <div
       onClick={toggleTheme}
-      className='hidden cursor-pointer xl:flex'
+      className={cn('cursor-pointer z-[99999999999999]')}
     >
       {isDarkMode ? <Sun size={30} /> : <CloudMoon size={30} />}
     </div>

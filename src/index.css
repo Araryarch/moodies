@@ -59,7 +59,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: hsl(var(--secondary));
+  background-color: hsl(var(--background));
   border-radius: 10px;
 }
 
@@ -68,5 +68,5 @@
 }
 
 ::-webkit-scrollbar-track {
-  background-color: hsl(var(--background));
+  background-color: hsl(var(--secondary));
 }

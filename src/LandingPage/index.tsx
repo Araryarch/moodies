@@ -16,6 +16,7 @@ import { Manga, Anime, ApiResponse } from '../types/api'
 import { cn } from '../lib/utils'
 import Card from './components/Molecules/Card'
 import BentoGridThirdDemo from './components/About'
+import { HeroParallax } from './components/ui/hero-parallax'
 
 const CardSkeleton: React.FC<{ classname: string }> = ({ classname }) => (
   <div
@@ -129,11 +130,11 @@ const LandingPage: React.FC = () => {
       <Navbar />
       <AiModal />
       <div className='relative flex items-center w-full min-h-screen overflow-hidden'>
-        <div className='flex flex-col items-start max-w-xl gap-6 pl-10'>
+        <div className='flex flex-col items-center w-full gap-6 pl-10 xl:max-w-xl xl:items-start'>
           <h1 className='font-bold text-8xl'>
             MOODIES<span className='text-destructive'>.</span>
           </h1>
-          <p className='font-medium'>
+          <p className='max-w-xl font-medium xl:w-full'>
             Moodies is your go-to app for anime that fits your vibe! Feeling
             happy, sad, hyped, chill, or romantic? Just pick a mood, and let
             Jikan API deliver top anime picks that match your energy. Try it now
@@ -145,7 +146,7 @@ const LandingPage: React.FC = () => {
           </button>
         </div>
 
-        <div className='flex flex-col items-end justify-center w-full min-h-screen gap-5'>
+        <div className='flex-col items-end justify-center hidden w-full min-h-screen gap-5 xl:flex'>
           <h1 className='px-5'>
             Personalized Recommendations Based on Your Current Mood
             <span className='px-4 py-2 ml-2 font-bold uppercase bg-secondary text-secondary-foreground rounded-xl'>
@@ -183,7 +184,13 @@ const LandingPage: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className='flex flex-col items-center justify-center w-full min-h-screen gap-5 bg-secondary'>
+      <div className='w-full min-h-screen xl:hidden'>
+        <HeroParallax
+          animeProducts={moodAnime?.data || []}
+          mangaProducts={moodManga?.data || []}
+        />
+      </div>
+      <div className='flex flex-col items-center justify-center w-full min-h-screen gap-5 p-5 bg-secondary'>
         <BentoGridThirdDemo />
       </div>
     </main>

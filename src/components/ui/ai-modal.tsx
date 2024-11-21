@@ -4,7 +4,7 @@ import Ai from './AI/ai'
 
 const AiModal = () => {
   return (
-    <div className='fixed right-0 z-50 p-2 border-2 border-black shadow-2xl bottom-2 bg-background rounded-xl dark:border-primary-foreground'>
+    <div className='fixed z-50 p-2 border-2 border-black shadow-2xl right-2 bottom-2 bg-background rounded-xl dark:border-primary-foreground'>
       <Modal>
         <ModalTrigger className='flex flex-col items-center justify-center cursor-pointer'>
           <IoChatbubbles
