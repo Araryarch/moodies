@@ -35,7 +35,7 @@ Ikuti langkah-langkah berikut untuk menginstal dan menjalankan proyek ini secara
    bun dev
    ```
 
-   Aplikasi akan berjalan di `http://localhost:3000`.
+   Aplikasi akan berjalan di `http://localhost:5173`.
 
 ## Penggunaan
 
