@@ -19,7 +19,7 @@ const Navbar = () => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [placeholderIndex, setPlaceholderIndex] = useState(0)
   const [isNavbar, setIsNavbar] = useState(false)
-  const [isXL, setIsXL] = useState(false) // Track if screen is XL or larger
+  const [isXL, setIsXL] = useState(false)
 
   const { animeData } = useGetAllAnime({ searchTerm })
   const { mangaData } = useGetAllManga({ searchTerm })
