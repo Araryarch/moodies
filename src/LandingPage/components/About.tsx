@@ -279,7 +279,8 @@ const SkeletonFive = () => {
           className='w-10 h-10 rounded-full'
         />
         <p className='text-xs text-neutral-500'>
-          There a lot of anime that u can watch the trailer or manga that you can read the synopsys.
+          There a lot of anime that u can watch the trailer or manga that you
+          can read the synopsys.
         </p>
       </motion.div>
       <motion.div
