@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import { ArrowUpRight } from 'lucide-react'
 
 import AiModal from '../components/ui/ai-modal'
@@ -16,19 +16,19 @@ import useGetMoodManga from './hooks/useGetMoodManga'
 import { Manga, Anime, ApiResponse } from '../types/api'
 import { cn } from '../lib/utils'
 
-// Skeleton Component untuk mengurangi duplikasi kode
-const CardSkeleton = () => (
-  <div className='flex w-[28rem] card aspect-video bg-secondary rounded-xl animate-pulse'></div>
+// Card Skeleton for loading state
+const CardSkeleton: React.FC = () => (
+  <div className='flex w-[24rem] card aspect-video bg-secondary rounded-xl animate-pulse'></div>
 )
 
-// Komponen untuk menampilkan card Anime/Manga
-const MediaCard = ({
-  item,
-  type
-}: {
+// Media Card Component with improved typing and error handling
+interface MediaCardProps {
   item: Anime | Manga
   type: 'anime' | 'manga'
-}) => {
+  rating?: number
+}
+
+const MediaCard: React.FC<MediaCardProps> = ({ item, type }) => {
   const renderGenres = () => {
     const genres = item.genres.slice(0, 2)
     return (
@@ -50,40 +50,37 @@ const MediaCard = ({
     )
   }
 
+  const imageUrl =
+    type === 'anime'
+      ? (item as Anime).images.jpg.large_image_url
+      : (item as Manga).images.jpg.large_image_url
+
   return (
-    <div className='flex w-[28rem] card aspect-video border-2 border-secondary overflow-hidden rounded-xl p-2 cursor-pointer'>
+    <div className='relative flex w-[24rem] card aspect-video border-2 border-secondary overflow-hidden rounded-xl cursor-pointer'>
       <img
-        src={
-          type === 'anime'
-            ? (item as Anime).images.jpg.image_url
-            : (item as Manga).images.jpg.image_url
-        }
+        src={imageUrl}
         alt={item.title}
         className='object-cover w-full h-full rounded-xl'
       />
-      <div className='p-4'>
-        <h2 className='text-lg font-bold'>{item.title}</h2>
-        {renderGenres()}
-        <p>{item.synopsis.substring(0, 100)}...</p>
+      <div className='absolute inset-0 transition-all duration-300 ease-in-out bg-black/30 hover:bg-black/50'>
+        <div className='absolute px-2 py-1 text-white rounded-md top-2 left-2 bg-secondary/80'>
+          Rank: {item.rank || 'N/A'}
+        </div>
+        <div className='absolute bottom-0 left-0 right-0 p-4 text-white bg-gradient-to-t from-black/70 to-transparent'>
+          <h2 className='text-lg font-bold'>{item.title}</h2>
+          {renderGenres()}
+          <p className='text-sm line-clamp-2'>
+            {item.synopsis.substring(0, 100)}...
+          </p>
+        </div>
       </div>
     </div>
   )
 }
 
-const LandingPage = () => {
-  const filteredAnimeData = useFilteredDataStore(
-    (state) => state.filteredAnimeData
-  )
-  const filteredMangaData = useFilteredDataStore(
-    (state) => state.filteredMangaData
-  )
-
-  const [mood, setMood] = useState<string | null>(null)
-  const [genre, setGenre] = useState<string>('')
-  const [startIndex, setStartIndex] = useState(0)
-  const [loading, setLoading] = useState(false)
-
-  // Memoize mood to genre map
+// Main Landing Page Component
+const LandingPage: React.FC = () => {
+  // Mood to Genre Mapping
   const moodToGenreMap = useMemo(
     () => ({
       baik: '8,36',
@@ -95,7 +92,21 @@ const LandingPage = () => {
     []
   )
 
-  // Hooks untuk mengambil data
+  // State Management
+  const [mood, setMood] = useState<string>('baik')
+  const [genre, setGenre] = useState<string>('')
+  const [startIndex, setStartIndex] = useState(0)
+  const [loading, setLoading] = useState(false)
+
+  // Filtered Data from Store
+  const filteredAnimeData = useFilteredDataStore(
+    (state) => state.filteredAnimeData
+  )
+  const filteredMangaData = useFilteredDataStore(
+    (state) => state.filteredMangaData
+  )
+
+  // Data Fetching Hooks
   const { animeData }: { animeData?: ApiResponse<Anime[]> } = useGetAllAnime({
     searchTerm: ''
   })
@@ -105,29 +116,29 @@ const LandingPage = () => {
   const { moodAnime } = useGetMoodAnime({ genre })
   const { moodManga } = useGetMoodManga({ genre })
 
-  // Update mood dari localStorage (useCallback untuk memoize fungsi)
+  // Update Mood from localStorage
   const updateMood = useCallback(() => {
-    const storedMood = localStorage.getItem('mood')
+    const storedMood = localStorage.getItem('mood') || 'baik'
     if (storedMood !== mood) {
       setMood(storedMood)
     }
   }, [mood])
 
-  // Efek untuk mengupdate genre berdasarkan mood
+  // Effect to update genre based on mood
   useEffect(() => {
     if (mood && moodToGenreMap[mood as keyof typeof moodToGenreMap]) {
       setGenre(moodToGenreMap[mood as keyof typeof moodToGenreMap])
     }
   }, [mood, moodToGenreMap])
 
-  // Efek untuk memantau perubahan mood
+  // Effect to monitor mood changes
   useEffect(() => {
     updateMood()
     const interval = setInterval(updateMood, 2000)
     return () => clearInterval(interval)
   }, [updateMood])
 
-  // Memoize data
+  // Memoized Data
   const animes = useMemo(
     () =>
       filteredAnimeData.length > 0 ? filteredAnimeData : animeData?.data || [],
@@ -139,7 +150,7 @@ const LandingPage = () => {
     [filteredMangaData, mangaData]
   )
 
-  // Efek untuk rotasi mood anime/manga
+  // Effect for mood anime/manga rotation
   useEffect(() => {
     const interval = setInterval(() => {
       if (moodAnime?.data || moodManga?.data) {
@@ -150,7 +161,6 @@ const LandingPage = () => {
             moodAnime?.data?.length || 0,
             moodManga?.data?.length || 0
           )
-
           setStartIndex(nextIndex < maxLength ? nextIndex : 0)
           setLoading(false)
         }, 500)
@@ -160,7 +170,7 @@ const LandingPage = () => {
     return () => clearInterval(interval)
   }, [startIndex, moodAnime?.data, moodManga?.data])
 
-  // Slice data mood anime dan manga
+  // Sliced Mood Data
   const displayedAnime =
     moodAnime?.data?.slice(startIndex, startIndex + 2) || []
   const displayedManga =
@@ -175,8 +185,8 @@ const LandingPage = () => {
       <Navbar />
       <AiModal />
 
-      <div className='flex items-center w-full min-h-screen'>
-        {/* Hero Section */}
+      <div className='relative flex items-center w-full min-h-screen'>
+        {/* Left Side Content */}
         <div className='flex flex-col items-start max-w-xl gap-6 pl-10'>
           <h1 className='font-bold text-8xl'>MOODIES.</h1>
           <p className='font-medium'>
@@ -190,11 +200,12 @@ const LandingPage = () => {
           </button>
         </div>
 
+        {/* Right Side Content */}
         <div className='flex flex-col items-end justify-center w-full min-h-screen gap-5'>
           <h1 className='px-5'>
             Personalized Recommendations Based on Your Current Mood
             <span className='px-4 py-2 ml-2 font-bold uppercase bg-secondary text-destructive-foreground rounded-xl'>
-              {mood ? mood : 'BAIK'}
+              {mood || 'BAIK'}
             </span>
           </h1>
 
@@ -226,6 +237,7 @@ const LandingPage = () => {
         </div>
       </div>
 
+      {/* Additional Lists Section */}
       <div className='w-full min-h-screen p-10 bg-secondary text-secondary-foreground'>
         <AnimeList data={animes} />
         <MangaList data={mangas} />
