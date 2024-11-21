@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import api from '../../api/jikan'
-import { ApiResponse } from '../../types/api'
-import { Anime } from '../../types/api'
+import api from '../../../api/jikan'
+import { ApiResponse } from '../../../types/api'
+import { Anime } from '../../../types/api'
 
 export type AnimeResponse = ApiResponse<Anime[]>
 

@@ -1,4 +1,4 @@
-import LandingPage from './LandingPage'
+import LandingPage from './Pages/LandingPage'
 import { cn } from './lib/utils'
 
 const App = () => {

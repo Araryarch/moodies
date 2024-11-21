@@ -9,9 +9,9 @@ import Tooltips from '../Tooltips'
 import { cn } from '../../../lib/utils'
 
 import ToggleTheme from './components/toggletheme'
-import useGetAllAnime from '../../../LandingPage/hooks/useGetAllAnime'
+import useGetAllAnime from '../../../Pages/LandingPage/hooks/useGetAllAnime'
 import { useFilteredDataStore } from '../../../lib/useFilteredData'
-import useGetAllManga from '../../../LandingPage/hooks/useGetAllManga'
+import useGetAllManga from '../../../Pages/LandingPage/hooks/useGetAllManga'
 import Topbar from './components/topbar'
 
 const Navbar = () => {

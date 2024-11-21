@@ -1,25 +1,25 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import { ArrowUpRight } from 'lucide-react'
 
-import AiModal from '../components/ui/ai-modal'
-import Navbar from '../components/ui/Navbar'
+import AiModal from '../../components/ui/ai-modal'
+import Navbar from '../../components/ui/Navbar'
 
-import { useFilteredDataStore } from '../lib/useFilteredData'
-import { useAnimeMangaStore } from '../lib/useAnimeMangaStore'
+import { useFilteredDataStore } from '../../lib/useFilteredData'
+import { useAnimeMangaStore } from '../../lib/useAnimeMangaStore'
 
 import useGetAllAnime from './hooks/useGetAllAnime'
 import useGetAllManga from './hooks/useGetAllManga'
 import useGetMoodAnime from './hooks/useGetMoodAnime'
 import useGetMoodManga from './hooks/useGetMoodManga'
 
-import { Manga, Anime, ApiResponse } from '../types/api'
-import { cn } from '../lib/utils'
+import { Manga, Anime, ApiResponse } from '../../types/api'
+import { cn } from '../../lib/utils'
 import Card from './components/Molecules/Card'
 import BentoGridThirdDemo from './components/About'
 import { HeroParallax } from './components/ui/hero-parallax'
 import { ContainerScroll } from './components/ui/container-scroll-animation'
 
-import moodies from '../assets/images/moodies.png'
+import moodies from '../../assets/images/moodies.png'
 import { InfiniteMovingCards } from './components/ui/infinite-moving-cards'
 
 const CardSkeleton: React.FC<{ classname: string }> = ({ classname }) => (

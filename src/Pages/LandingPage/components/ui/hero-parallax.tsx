@@ -7,7 +7,7 @@ import {
   MotionValue
 } from 'framer-motion'
 
-import { Anime, Manga } from '../../../types/api'
+import { Anime, Manga } from '../../../../types/api'
 
 export const HeroParallax: React.FC<{
   animeProducts: Anime[]

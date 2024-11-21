@@ -1,5 +1,5 @@
-import { cn } from '../../../lib/utils'
-import { Anime, Manga } from '../../../types/api'
+import { cn } from '../../../../lib/utils'
+import { Anime, Manga } from '../../../../types/api'
 
 interface CardProps {
   item: Anime | Manga
