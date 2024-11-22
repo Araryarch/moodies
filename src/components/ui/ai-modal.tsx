@@ -11,7 +11,7 @@ const AiModal = () => {
       const scrollTop = window.scrollY
       const scrollHeight = document.documentElement.scrollHeight
       const clientHeight = document.documentElement.clientHeight
-      const isBottom = scrollTop + clientHeight >= scrollHeight - 10
+      const isBottom = scrollTop + clientHeight >= scrollHeight - 20
 
       setIsScrolledToBottom(isBottom)
     }
@@ -24,7 +24,7 @@ const AiModal = () => {
 
   return (
     <div
-      className={`fixed right-2 bottom-2 z-50 p-2 border-2 border-black shadow-2xl bg-background rounded-xl dark:border-primary-foreground transition-all duration-300 ${
+      className={`fixed right-2 z-50 p-2 border-2 border-black shadow-2xl bg-background rounded-xl dark:border-primary-foreground transition-all duration-300 ${
         isScrolledToBottom ? 'bottom-16' : 'bottom-2'
       }`}
     >
