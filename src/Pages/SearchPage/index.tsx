@@ -25,11 +25,11 @@ const SearchPage = () => {
   }, [mangaData, setMangas])
 
   const renderMediaCard = useMemo(
-    () => (media: Anime | Manga, type: 'anime' | 'manga') =>
+    () => (media: Anime | Manga, type: 'anime' | 'manga', index: number) =>
       (
         <div
-          key={media.mal_id}
-          className='overflow-hidden bg-[hsl(var(--card))] rounded-lg shadow-lg'
+          key={index}
+          className='overflow-hidden rounded-lg shadow-lg bg-card'
         >
           <img
             src={media.images.jpg.large_image_url}
@@ -37,10 +37,11 @@ const SearchPage = () => {
             className='object-cover w-full h-48'
           />
           <div className='p-4'>
-            <h3 className='text-lg font-semibold text-[hsl(var(--foreground))]'>
-              {media.title} || {type}
+            <p className='text-xs uppercase text-foreground'>{type}</p>
+            <h3 className='text-lg font-semibold text-foreground'>
+              {media.title}
             </h3>
-            <p className='mt-2 text-sm text-[hsl(var(--muted-foreground))]'>
+            <p className='mt-2 text-sm text-muted-foreground'>
               {media.synopsis
                 ? `${media.synopsis.substring(0, 100)}...`
                 : 'No synopsis available'}
@@ -52,16 +53,16 @@ const SearchPage = () => {
   )
 
   return (
-    <div className='w-full min-h-screen bg-[hsl(var(--background))]'>
+    <div className='w-full min-h-screen bg-background'>
       <Navbar setSearchTerm={setSearchTerm} />
 
-      <h1 className='mb-4 text-2xl font-bold text-[hsl(var(--foreground))] px-6 pt-24'>
+      <h1 className='px-6 pt-24 mb-4 text-2xl font-bold text-foreground'>
         Search Results:
       </h1>
 
       <div className='grid grid-cols-1 gap-6 p-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
-        {animes.map((anime) => renderMediaCard(anime, 'anime'))}
-        {mangas.map((manga) => renderMediaCard(manga, 'manga'))}
+        {animes.map((anime, index) => renderMediaCard(anime, 'anime', index))}
+        {mangas.map((manga, index) => renderMediaCard(manga, 'manga', index))}
       </div>
     </div>
   )

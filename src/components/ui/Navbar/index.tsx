@@ -147,7 +147,7 @@ const Navbar: React.FC<NavbarProps> = ({ setSearchTerm }) => {
           type='text'
           placeholder={placeholders[placeholderIndex]}
           ref={inputRef}
-          className='w-full px-2 py-1 text-sm bg-transparent border-none outline-none text-primary'
+          className='w-full px-2 py-1 text-sm bg-transparent border-none outline-none text-secondary-foreground'
           onKeyDown={handleKeyDown}
         />
         <button
