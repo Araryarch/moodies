@@ -9,7 +9,7 @@ import { FaX } from 'react-icons/fa6'
 import { IoChatbubbles } from 'react-icons/io5'
 import Tooltips from '../Tooltips'
 import { LibraryBig } from 'lucide-react'
-import { useSearchTermStore } from '../../../lib/useSearchTermStore' // Importing the store
+import { useSearchTermStore } from '../../../lib/useSearchTermStore'
 
 const Navbar = () => {
   const [searchTerm, setLocalSearchTerm] = useState('')
@@ -60,17 +60,16 @@ const Navbar = () => {
     e.preventDefault()
     const term = inputRef.current?.value.trim().toLowerCase() || ''
     setLocalSearchTerm(term)
-    setSearchTerm(term) // Update the global Zustand store
+    setSearchTerm(term)
 
-    setIsProcessing(true) // Set to true when submitting the form
+    setIsProcessing(true)
 
-    // Simulate a delay or API call
     setTimeout(() => {
       if (inputRef.current) {
         inputRef.current.value = ''
       }
-      setIsProcessing(false) // Set back to false after the "API" request is complete
-    }, 1000) // 1 second delay to simulate a search
+      setIsProcessing(false)
+    }, 1000)
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -88,7 +87,10 @@ const Navbar = () => {
       )}
     >
       <ToggleTheme />
-      <h1 className='text-xl font-bold uppercase xl:flex'>
+      <h1
+        className='text-xl font-bold uppercase cursor-pointer xl:flex'
+        onClick={() => navigate('/')}
+      >
         Moodies<span className='text-destructive'>.</span>
       </h1>
       <Menu data={setIsNavbarOpen} />

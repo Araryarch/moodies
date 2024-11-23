@@ -1,5 +1,6 @@
 import { cn } from '../../../../lib/utils'
 import { Anime, Manga } from '../../../../types/api'
+import { useNavigate } from 'react-router-dom'
 
 interface CardProps {
   item: Anime | Manga
@@ -7,6 +8,8 @@ interface CardProps {
 }
 
 const Card: React.FC<CardProps> = ({ item, type }) => {
+  const navigate = useNavigate()
+
   const renderGenres = () => {
     const genres = item.genres.slice(0, 2)
     return (
@@ -33,12 +36,21 @@ const Card: React.FC<CardProps> = ({ item, type }) => {
       ? (item as Anime).images.jpg.large_image_url
       : (item as Manga).images.jpg.large_image_url
 
+  const handleClick = () => {
+    if (type === 'anime') {
+      navigate(`/anime/${item.mal_id}`)
+    } else {
+      navigate(`/manga/${item.mal_id}`)
+    }
+  }
+
   return (
     <div
       className={cn(
         'relative flex w-[24rem] card aspect-video border-2 border-secondary overflow-hidden rounded-xl cursor-pointer',
         type === 'anime' ? '-mr-2' : '-ml-2'
       )}
+      onClick={handleClick}
     >
       <img
         src={imageUrl}

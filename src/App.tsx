@@ -4,6 +4,8 @@ import { Routes, Route } from 'react-router-dom'
 import MangaList from './Pages/MangaList'
 import SearchPage from './Pages/SearchPage'
 import Login from './Pages/Login'
+import AnimeDetail from './Pages/AnimeList/AnimeDetail'
+import MangaDetail from './Pages/MangaList/MangaDetail'
 
 const App = () => {
   return (
@@ -18,7 +20,7 @@ const App = () => {
       />
       <Route
         path='/anime/:id'
-        element={<AnimeList />}
+        element={<AnimeDetail />}
       />
       <Route
         path='/manga'
@@ -26,7 +28,7 @@ const App = () => {
       />
       <Route
         path='/manga/:id'
-        element={<MangaList />}
+        element={<MangaDetail />}
       />
       <Route
         path='/search'
