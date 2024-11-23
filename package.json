@@ -27,6 +27,7 @@
     "react-router-dom": "^6.28.0",
     "swiper": "^11.1.15",
     "tailwind-merge": "^2.5.4",
+    "use-debounce": "^10.0.4",
     "zustand": "^5.0.1"
   },
   "devDependencies": {

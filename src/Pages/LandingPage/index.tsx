@@ -117,7 +117,7 @@ const LandingPage: React.FC = () => {
           setLoading(false)
         }, 500)
       }
-    }, 4000)
+    }, 5000)
 
     return () => clearInterval(interval)
   }, [startIndex, moodAnime?.data, moodManga?.data])

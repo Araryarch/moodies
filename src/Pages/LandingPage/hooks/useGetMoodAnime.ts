@@ -25,7 +25,7 @@ export default function useGetMoodAnime({ genre }: UseGetMoodAnimeProps) {
       })
       return data
     },
-    refetchOnWindowFocus: true
+    refetchOnWindowFocus: false
   })
 
   return { moodAnime, isLoading, error }

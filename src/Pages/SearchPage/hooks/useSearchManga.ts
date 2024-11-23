@@ -5,28 +5,31 @@ import { Manga } from '../../../types/api'
 
 export type MangaResponse = ApiResponse<Manga[]>
 
-interface UseGetMoodMangaProps {
-  genre?: string | number
+interface UseGetSearchMangaProps {
+  searchTerm?: string
 }
 
-export default function useGetMoodManga({ genre }: UseGetMoodMangaProps) {
+export default function useGetSearchManga({
+  searchTerm
+}: UseGetSearchMangaProps) {
   const {
-    data: moodManga,
+    data: mangaData,
     isLoading,
     error
   } = useQuery<MangaResponse>({
-    queryKey: ['Manga', genre],
+    queryKey: ['Manga', searchTerm],
     queryFn: async () => {
-      const { data } = await api.get<MangaResponse>('/manga', {
+      const { data } = await api.get<MangaResponse>(`/manga`, {
         params: {
           limit: 15,
-          genres: genre
+          q: searchTerm
         }
       })
       return data
     },
+    enabled: !!searchTerm?.trim(),
     refetchOnWindowFocus: false
   })
 
-  return { moodManga, isLoading, error }
+  return { mangaData, isLoading, error }
 }

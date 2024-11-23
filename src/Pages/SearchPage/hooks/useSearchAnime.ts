@@ -5,17 +5,19 @@ import { Anime } from '../../../types/api'
 
 export type AnimeResponse = ApiResponse<Anime[]>
 
-interface UseGetAllAnimeProps {
+interface UseGetSearchAnimeProps {
   searchTerm?: string
 }
 
-export default function useGetAllAnime({ searchTerm }: UseGetAllAnimeProps) {
+export default function useGetSearchAnime({
+  searchTerm
+}: UseGetSearchAnimeProps) {
   const {
     data: animeData,
     isLoading,
     error
   } = useQuery<AnimeResponse>({
-    queryKey: ['anime', searchTerm],
+    queryKey: ['searchAnime', searchTerm],
     queryFn: async () => {
       const { data } = await api.get<AnimeResponse>('/anime', {
         params: {
@@ -25,6 +27,7 @@ export default function useGetAllAnime({ searchTerm }: UseGetAllAnimeProps) {
       })
       return data
     },
+    enabled: !!searchTerm?.trim(),
     refetchOnWindowFocus: false
   })
 

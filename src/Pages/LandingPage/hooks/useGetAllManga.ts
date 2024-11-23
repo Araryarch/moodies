@@ -25,7 +25,7 @@ export default function useGetAllManga({ searchTerm }: UseGetAllMangaProps) {
       })
       return data
     },
-    refetchOnWindowFocus: true
+    refetchOnWindowFocus: false
   })
 
   return { mangaData, isLoading, error }
