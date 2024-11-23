@@ -5,22 +5,18 @@ import { Anime } from '../../../types/api'
 
 export type AnimeResponse = ApiResponse<Anime>
 
-interface UseAnimeByIdProps {
-  id: string
-}
-
-export default function useAnimeById({ id }: UseAnimeByIdProps) {
+export default function useGetDataAnime() {
   const {
     data: animeData,
     isLoading,
     error
   } = useQuery<AnimeResponse>({
-    queryKey: ['anime', id],
+    queryKey: ['anime'],
     queryFn: async () => {
-      const { data } = await api.get<AnimeResponse>(`/anime/${id}`)
+      const { data } = await api.get<AnimeResponse>(`/anime`)
       return data
     },
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: true
   })
 
   return { animeData, isLoading, error }
