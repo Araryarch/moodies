@@ -6,6 +6,7 @@ import SearchPage from './Pages/SearchPage'
 import Login from './Pages/Login'
 import AnimeDetail from './Pages/AnimeList/AnimeDetail'
 import MangaDetail from './Pages/MangaList/MangaDetail'
+import Community from './Pages/Community'
 
 const App = () => {
   return (
@@ -37,6 +38,10 @@ const App = () => {
       <Route
         path='/login'
         element={<Login />}
+      />
+      <Route
+        path='/community'
+        element={<Community />}
       />
     </Routes>
   )
