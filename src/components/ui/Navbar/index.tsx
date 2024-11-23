@@ -31,7 +31,7 @@ const Navbar = () => {
   const [placeholderIndex, setPlaceholderIndex] = useState(0)
   const [isNavbarOpen, setIsNavbarOpen] = useState(false)
   const [isXL, setIsXL] = useState(window.innerWidth >= 1280)
-  const [isProcessing, setIsProcessing] = useState(false) // isProcessing to show loading state
+  const [isProcessing, setIsProcessing] = useState(false)
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -93,6 +93,7 @@ const Navbar = () => {
       </h1>
       <Menu data={setIsNavbarOpen} />
       {isNavbarOpen && <Topbar />}
+
       <form
         className='relative items-center hidden w-full max-w-xl gap-3 p-2 rounded-lg shadow-md xl:flex bg-card'
         onSubmit={onSubmit}
@@ -103,6 +104,7 @@ const Navbar = () => {
           ref={inputRef}
           className='w-full px-2 py-1 text-sm bg-transparent border-none outline-none text-secondary-foreground'
           onKeyDown={handleKeyDown}
+          disabled={isProcessing} // Disable the input while processing
         />
         <button
           type='submit'
@@ -113,11 +115,13 @@ const Navbar = () => {
           {isProcessing ? 'Loading...' : 'Search'}
         </button>
       </form>
+
       {!isProcessing && searchTerm.trim() && (
         <p className='text-center text-muted'>
           Searching for "{searchTerm}"...
         </p>
       )}
+
       <div className='items-center hidden gap-3 medsos-list xl:flex'>
         <Tooltips text='Discord'>
           <FaDiscord
@@ -144,6 +148,7 @@ const Navbar = () => {
           />
         </Tooltips>
       </div>
+
       <div className='items-center justify-center hidden gap-5 text-sm font-medium features-list md:hidden xl:flex'>
         <div
           className='flex flex-col items-center justify-center cursor-pointer'
@@ -165,6 +170,20 @@ const Navbar = () => {
         >
           <IoChatbubbles size={30} />
           <p>Community</p>
+        </div>
+        <div className='flex items-center justify-center gap-3 ml-10 '>
+          <button
+            className='px-4 py-2 font-bold transition-all duration-300 ease-in-out rounded-md shadow-2xl bg-secondary hover:bg-muted'
+            onClick={() => navigate('/login')}
+          >
+            REGISTER
+          </button>
+          <button
+            className='px-4 py-2 font-bold transition-all duration-300 ease-in-out rounded-md shadow-2xl bg-secondary hover:bg-muted'
+            onClick={() => navigate('/login')}
+          >
+            LOGIN
+          </button>
         </div>
       </div>
     </nav>
