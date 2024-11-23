@@ -6,6 +6,7 @@ import useGetSearchManga from './hooks/useSearchManga'
 import useGetSearchAnime from './hooks/useSearchAnime'
 
 import { Anime, Manga } from '../../types/api'
+import { useNavigate } from 'react-router-dom'
 
 const SearchPage = () => {
   const { animes, setAnimes, mangas, setMangas } = useAnimeMangaStore()
@@ -22,12 +23,15 @@ const SearchPage = () => {
     error: errorManga
   } = useGetSearchManga({ searchTerm })
 
+  const navigate = useNavigate()
+
   const renderMediaCard = useMemo(
     () => (media: Anime | Manga, type: 'anime' | 'manga', index: number) =>
       (
         <div
           key={index}
-          className='overflow-hidden rounded-lg shadow-lg bg-card'
+          className='overflow-hidden rounded-lg shadow-lg cursor-pointer bg-card'
+          onClick={() => navigate(`/${type}/${media.mal_id}`)}
         >
           <img
             src={media.images.jpg.large_image_url}
@@ -47,7 +51,7 @@ const SearchPage = () => {
           </div>
         </div>
       ),
-    []
+    [navigate]
   )
 
   useEffect(() => {

@@ -8,7 +8,7 @@ import { FaDiscord, FaInstagram, FaReddit } from 'react-icons/fa'
 import { FaX } from 'react-icons/fa6'
 import { IoChatbubbles } from 'react-icons/io5'
 import Tooltips from '../Tooltips'
-import { LibraryBig } from 'lucide-react'
+import { LibraryBig, TvMinimalPlay } from 'lucide-react'
 import { useSearchTermStore } from '../../../lib/useSearchTermStore'
 
 const Navbar = () => {
@@ -106,12 +106,12 @@ const Navbar = () => {
           ref={inputRef}
           className='w-full px-2 py-1 text-sm bg-transparent border-none outline-none text-secondary-foreground'
           onKeyDown={handleKeyDown}
-          disabled={isProcessing} // Disable the input while processing
+          disabled={isProcessing}
         />
         <button
           type='submit'
           className='px-4 py-2 text-sm font-bold rounded-md bg-secondary dark:text-white text-secondary-foreground hover:bg-muted'
-          disabled={isProcessing} // Disable the button while processing
+          disabled={isProcessing}
           aria-label='Search'
         >
           {isProcessing ? 'Loading...' : 'Search'}
@@ -156,7 +156,7 @@ const Navbar = () => {
           className='flex flex-col items-center justify-center cursor-pointer'
           onClick={() => navigate('/anime')}
         >
-          <IoChatbubbles size={30} />
+          <TvMinimalPlay size={30} />
           <p>Anime</p>
         </div>
         <div
