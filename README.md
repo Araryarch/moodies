@@ -6,6 +6,13 @@ Moodies adalah aplikasi inovatif yang dirancang untuk Gen Z, khususnya mereka ya
 
 Apakah Anda merasa lelah, cemas, atau bahagia? Moodies siap memberikan rekomendasi anime yang dapat membantu Anda merasakan emosi yang lebih baik atau melengkapi suasana hati Anda. Aplikasi ini berfokus pada memberi dampak positif kepada penggunanya, dengan konsep unik yang memanfaatkan teknologi AI untuk menghubungkan mood Anda dengan konten hiburan yang relevan.
 
+## Tech Stack
+- Bun Js
+- Vite + React Js
+- Supabase
+- Shadcn/ui and Aceternity UI
+- Typescript
+
 ## Fitur
 
 - **Chatbot AI untuk Mendeteksi Mood**: Chatbot canggih kami akan berinteraksi dengan pengguna untuk menilai suasana hati mereka, sehingga aplikasi dapat memberikan rekomendasi anime yang sesuai dengan mood saat itu.
