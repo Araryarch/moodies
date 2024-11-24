@@ -10,6 +10,7 @@ interface Post {
   sender: string
   timestamp: string
   image_url?: string
+  user_id: string // Added user_id field to identify the creator of the post
 }
 
 interface AlertProps {
@@ -155,7 +156,8 @@ const Community = () => {
         text: newText.trim(),
         sender: sender,
         timestamp: new Date().toISOString(),
-        image_url: imageUrl
+        image_url: imageUrl,
+        user_id: user?.id // Store the user's ID with the post
       }
 
       const { error } = await supabase.from('posts').insert([post])
@@ -176,7 +178,7 @@ const Community = () => {
 
   // Edit post
   const editPost = (post: Post) => {
-    if (post.sender !== username) {
+    if (post.user_id !== user?.id) {
       showAlert('You can only edit your own posts.', 'error')
       return
     }
@@ -202,7 +204,6 @@ const Community = () => {
         imageUrl = await uploadImage(image)
       }
 
-      // Use the username from the profiles table or metadata
       const sender = username || 'anonymous'
 
       const updatedPost = {
@@ -210,6 +211,12 @@ const Community = () => {
         sender: sender,
         timestamp: new Date().toISOString(),
         image_url: imageUrl || editingPost?.image_url
+      }
+
+      // Only allow update if the user is the owner of the post
+      if (editingPost?.user_id !== user?.id) {
+        showAlert('You can only edit your own posts.', 'error')
+        return
       }
 
       const { error } = await supabase
@@ -234,7 +241,12 @@ const Community = () => {
   }
 
   // Delete post
-  const deletePost = async (id: number) => {
+  const deletePost = async (id: number, user_id: string) => {
+    if (user_id !== user?.id) {
+      showAlert('You can only delete your own posts.', 'error')
+      return
+    }
+
     if (!window.confirm('Are you sure you want to delete this post?')) return
 
     setIsLoading(true)
@@ -281,19 +293,19 @@ const Community = () => {
                   <img
                     src={post.image_url}
                     alt='Post Image'
-                    className='object-cover w-full h-64 mt-4 rounded-lg'
+                    className='w-full h-auto mt-2 rounded-md'
                   />
                 )}
-                <div className='flex justify-between mt-4'>
+                <div className='flex justify-end mt-2 space-x-2'>
                   <button
+                    className='text-primary'
                     onClick={() => editPost(post)}
-                    className='text-primary hover:text-primary-foreground'
                   >
                     Edit
                   </button>
                   <button
-                    onClick={() => deletePost(post.id)}
-                    className='text-destructive hover:text-destructive-foreground'
+                    className='text-destructive'
+                    onClick={() => deletePost(post.id, post.user_id)}
                   >
                     Delete
                   </button>
@@ -304,36 +316,25 @@ const Community = () => {
         </div>
 
         <div className='p-6'>
-          <div className='max-w-xl mx-auto'>
-            <textarea
-              value={newText}
-              onChange={(e) => setNewText(e.target.value)}
-              placeholder='What’s on your mind?'
-              className='w-full p-3 font-medium border rounded-lg text-secondary'
-            />
-            <div className='mt-4'>
+          <textarea
+            value={newText}
+            onChange={(e) => setNewText(e.target.value)}
+            placeholder='Write your post...'
+            className='w-full p-4 rounded-md shadow-sm bg-primary/10 text-primary placeholder:text-primary-foreground'
+          />
+          <div className='mt-4'>
+            <button
+              onClick={editingPost ? updatePost : addPost}
+              className='px-6 py-2 text-white rounded-md bg-primary'
+            >
               {isLoading ? (
                 <LoadingSpinner />
+              ) : editingPost ? (
+                'Update Post'
               ) : (
-                <>
-                  {editingPost ? (
-                    <button
-                      onClick={updatePost}
-                      className='w-full px-6 py-2 text-sm font-semibold rounded-lg bg-primary text-primary-foreground'
-                    >
-                      Update Post
-                    </button>
-                  ) : (
-                    <button
-                      onClick={addPost}
-                      className='w-full px-6 py-2 text-sm font-semibold rounded-lg bg-primary text-primary-foreground'
-                    >
-                      Add Post
-                    </button>
-                  )}
-                </>
+                'Post'
               )}
-            </div>
+            </button>
           </div>
         </div>
       </div>
