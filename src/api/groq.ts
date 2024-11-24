@@ -1,31 +1,30 @@
-import { Groq } from 'groq-sdk'
-
-const groq = new Groq({
-  apiKey: import.meta.env.VITE_GROQ_APIKEY,
-  dangerouslyAllowBrowser: true
-})
+import Groq from 'groq-sdk'
 
 export type ChatMessage = {
   role: 'user' | 'system' | 'assistant'
   content: string
 }
 
-export const fetchChatCompletion = async (
+export async function fetchChatCompletion(
   messages: ChatMessage[]
-): Promise<string> => {
+): Promise<string> {
+  const groq = new Groq({
+    dangerouslyAllowBrowser: true,
+    apiKey: import.meta.env.VITE_GROQ_APIKEY
+  })
+
   const systemMessage: ChatMessage = {
     role: 'system',
-    content: `
-    Kamu adalah AI yang bernama Moodies, yang dapat mengecek mood seseorang berdasarkan percakapan.
+    content: `Kamu adalah AI yang bernama Moodies, yang dapat mengecek mood seseorang berdasarkan percakapan.
     Setiap kali kamu memberikan jawaban, kamu harus mencantumkan mood pengguna di akhir percakapan dengan format berikut:
     1. Jawaban kamu terhadap pertanyaan atau percakapan pengguna.
     2. Mood pengguna: [mood], dengan mood yang bisa berupa salah satu dari: baik, senang, marah, sedih, atau depresi.
     
-    Ingat! Format mood harus selalu dalam tanda kurung siku ([]) dan pastikan kamu menggunakan mood yang sesuai.
-  `
+    Ingat! Format mood harus selalu dalam tanda kurung siku ([]) dan pastikan kamu menggunakan mood yang sesuai.`
   }
 
-  const messagesWithSystem = [systemMessage, ...messages]
+  const messagesWithSystem =
+    messages.length > 0 ? [systemMessage, ...messages] : [systemMessage]
 
   const chatCompletion = await groq.chat.completions.create({
     messages: messagesWithSystem,
@@ -33,14 +32,9 @@ export const fetchChatCompletion = async (
     temperature: 1,
     max_tokens: 1024,
     top_p: 1,
-    stream: true,
+    stream: false,
     stop: null
   })
 
-  let result = ''
-  for await (const chunk of chatCompletion) {
-    result += chunk.choices[0]?.delta?.content || ''
-  }
-
-  return result
+  return chatCompletion.choices[0]?.message?.content || ''
 }

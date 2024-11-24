@@ -6,6 +6,7 @@ const Ai = () => {
   const [input, setInput] = useState('')
   const [isFirstMessage, setIsFirstMessage] = useState(true)
   const [mood, setMood] = useState<string | null>(localStorage.getItem('mood'))
+  const [image, setImage] = useState<File | null>(null) // State for image file
 
   const { completionData, isLoading, error } = useChatCompletion(
     messages,
@@ -20,6 +21,18 @@ const Ai = () => {
       setMessages((prev) => [...prev, newMessage])
       setInput('')
       setIsFirstMessage(false)
+    }
+    if (image) {
+      const imageUrl = URL.createObjectURL(image) // Create a URL for the image
+      const imageMessage: ChatMessage = {
+        role: 'user',
+        content: JSON.stringify({
+          type: 'image_url',
+          image_url: { url: imageUrl }
+        }) // Send image URL as message content
+      }
+      setMessages((prev) => [...prev, imageMessage])
+      setImage(null) // Reset image state after sending
     }
   }
 
@@ -75,7 +88,15 @@ const Ai = () => {
               <strong className='font-semibold'>
                 {msg.role === 'user' ? 'You' : 'Moodies'}:
               </strong>
-              <p className='mt-1'>{msg.content}</p>
+              {msg.content.startsWith('{"type":"image_url"') ? (
+                <img
+                  src={JSON.parse(msg.content).image_url.url}
+                  alt='User uploaded'
+                  className='max-w-xs mt-2 rounded-lg'
+                />
+              ) : (
+                <p className='mt-1'>{msg.content}</p>
+              )}
             </div>
           </div>
         ))}
@@ -112,6 +133,14 @@ const Ai = () => {
           >
             Send
           </button>
+        </div>
+        <div className='mt-2'>
+          <input
+            type='file'
+            accept='image/*'
+            onChange={(e) => e.target.files && setImage(e.target.files[0])}
+            className='w-full file-input file-input-bordered file-input-secondary'
+          />
         </div>
       </div>
     </div>

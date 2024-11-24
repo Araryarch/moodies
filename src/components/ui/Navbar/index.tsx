@@ -10,12 +10,16 @@ import { IoChatbubbles } from 'react-icons/io5'
 import Tooltips from '../Tooltips'
 import { LibraryBig, TvMinimalPlay } from 'lucide-react'
 import { useSearchTermStore } from '../../../lib/useSearchTermStore'
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+const supabaseKey = import.meta.env.VITE_ANON_KEY
+const supabase = createClient(supabaseUrl, supabaseKey)
 
 const Navbar = () => {
   const [searchTerm, setLocalSearchTerm] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
   const navigate = useNavigate()
-
   const { setSearchTerm } = useSearchTermStore()
 
   const placeholders = useMemo(
@@ -32,6 +36,29 @@ const Navbar = () => {
   const [isNavbarOpen, setIsNavbarOpen] = useState(false)
   const [isXL, setIsXL] = useState(window.innerWidth >= 1280)
   const [isProcessing, setIsProcessing] = useState(false)
+  const [userName, setUserName] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const {
+        data: { user }
+      } = await supabase.auth.getUser()
+
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', user.id)
+          .single()
+
+        if (profile) {
+          setUserName(profile.full_name)
+        }
+      }
+    }
+
+    fetchUser()
+  }, [])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -77,6 +104,12 @@ const Navbar = () => {
       e.preventDefault()
       onSubmit(e as unknown as React.FormEvent<HTMLFormElement>)
     }
+  }
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    setUserName(null)
+    navigate('/')
   }
 
   return (
@@ -173,19 +206,33 @@ const Navbar = () => {
           <IoChatbubbles size={30} />
           <p>Community</p>
         </div>
-        <div className='flex items-center justify-center gap-3 ml-10 '>
-          <button
-            className='px-4 py-2 font-bold transition-all duration-300 ease-in-out rounded-md shadow-2xl bg-secondary hover:bg-muted'
-            onClick={() => navigate('/login')}
-          >
-            REGISTER
-          </button>
-          <button
-            className='px-4 py-2 font-bold transition-all duration-300 ease-in-out rounded-md shadow-2xl bg-secondary hover:bg-muted'
-            onClick={() => navigate('/login')}
-          >
-            LOGIN
-          </button>
+        <div className='flex items-center justify-center gap-3 ml-10 uppercase'>
+          {userName ? (
+            <>
+              <span className='font-medium'>{`Hello, ${userName}`}</span>
+              <button
+                className='px-4 py-2 font-bold transition-all duration-300 ease-in-out rounded-md shadow-2xl bg-secondary hover:bg-muted'
+                onClick={handleLogout}
+              >
+                LOGOUT
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                className='px-4 py-2 font-bold transition-all duration-300 ease-in-out rounded-md shadow-2xl bg-secondary hover:bg-muted'
+                onClick={() => navigate('/login/signup')}
+              >
+                REGISTER
+              </button>
+              <button
+                className='px-4 py-2 font-bold transition-all duration-300 ease-in-out rounded-md shadow-2xl bg-secondary hover:bg-muted'
+                onClick={() => navigate('/login/signin')}
+              >
+                LOGIN
+              </button>
+            </>
+          )}
         </div>
       </div>
     </nav>

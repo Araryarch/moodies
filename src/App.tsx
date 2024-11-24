@@ -36,7 +36,7 @@ const App = () => {
         element={<SearchPage />}
       />
       <Route
-        path='/login'
+        path='/login/:type'
         element={<Login />}
       />
       <Route

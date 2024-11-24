@@ -13,12 +13,13 @@ export default function useChatCompletion(
     isLoading,
     error
   } = useQuery<string>({
-    queryKey: ['chatCompletion', messages],
+    queryKey: ['chatCompletion', JSON.stringify(messages)],
     queryFn: async () => {
+      if (messages.length === 0) return ''
       const result = await fetchChatCompletion(messages)
       return result
     },
-    enabled,
+    enabled: enabled && messages.length > 0,
     refetchOnWindowFocus: false
   })
 
