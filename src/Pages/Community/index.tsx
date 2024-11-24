@@ -5,12 +5,11 @@ import Footer from '../../components/ui/Footer'
 
 // Interface definitions
 interface Post {
-  id: number
-  text: string
+  id: string // Unique identifier
   sender: string
+  text: string
   timestamp: string
   image_url?: string
-  user_id: string // Added user_id field to identify the creator of the post
 }
 
 interface AlertProps {
@@ -156,8 +155,7 @@ const Community = () => {
         text: newText.trim(),
         sender: sender,
         timestamp: new Date().toISOString(),
-        image_url: imageUrl,
-        user_id: user?.id // Store the user's ID with the post
+        image_url: imageUrl
       }
 
       const { error } = await supabase.from('posts').insert([post])
@@ -178,15 +176,9 @@ const Community = () => {
 
   // Edit post
   const editPost = (post: Post) => {
-    if (post.user_id !== user?.id) {
-      showAlert('You can only edit your own posts.', 'error')
-      return
-    }
-
     setEditingPost(post)
     setNewText(post.text)
     if (post.image_url) {
-      // Handle image preview if post has an image
       setImage(null) // Reset image input when editing (optional)
     }
   }
@@ -204,6 +196,7 @@ const Community = () => {
         imageUrl = await uploadImage(image)
       }
 
+      // Use the username from the profiles table or metadata
       const sender = username || 'anonymous'
 
       const updatedPost = {
@@ -213,17 +206,10 @@ const Community = () => {
         image_url: imageUrl || editingPost?.image_url
       }
 
-      // Only allow update if the user is the owner of the post
-      if (editingPost?.user_id !== user?.id) {
-        showAlert('You can only edit your own posts.', 'error')
-        return
-      }
-
       const { error } = await supabase
         .from('posts')
         .update(updatedPost)
-        .eq('id', editingPost?.id)
-
+        .eq('id', editingPost?.id) // Use post ID, not sender's name
       if (error) throw error
 
       setEditingPost(null)
@@ -241,17 +227,12 @@ const Community = () => {
   }
 
   // Delete post
-  const deletePost = async (id: number, user_id: string) => {
-    if (user_id !== user?.id) {
-      showAlert('You can only delete your own posts.', 'error')
-      return
-    }
-
+  const deletePost = async (id: string) => {
     if (!window.confirm('Are you sure you want to delete this post?')) return
 
     setIsLoading(true)
     try {
-      const { error } = await supabase.from('posts').delete().eq('id', id)
+      const { error } = await supabase.from('posts').delete().eq('id', id) // Use post ID, not sender
       if (error) throw error
 
       showAlert('Post deleted successfully!', 'success')
@@ -279,7 +260,7 @@ const Community = () => {
           <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
             {posts.map((post) => (
               <div
-                key={post.id}
+                key={post.id} // Use post id as the key
                 className='p-4 border rounded-lg shadow-sm bg-secondary'
               >
                 <div className='flex justify-between'>
@@ -293,19 +274,19 @@ const Community = () => {
                   <img
                     src={post.image_url}
                     alt='Post Image'
-                    className='w-full h-auto mt-2 rounded-md'
+                    className='object-cover w-full h-64 mt-4 rounded-lg'
                   />
                 )}
-                <div className='flex justify-end mt-2 space-x-2'>
+                <div className='flex justify-between mt-4'>
                   <button
-                    className='text-primary'
                     onClick={() => editPost(post)}
+                    className='text-primary hover:text-primary-foreground'
                   >
                     Edit
                   </button>
                   <button
-                    className='text-destructive'
-                    onClick={() => deletePost(post.id, post.user_id)}
+                    onClick={() => deletePost(post.id)} // Use post id for deletion
+                    className='text-destructive hover:text-destructive-foreground'
                   >
                     Delete
                   </button>
@@ -316,25 +297,36 @@ const Community = () => {
         </div>
 
         <div className='p-6'>
-          <textarea
-            value={newText}
-            onChange={(e) => setNewText(e.target.value)}
-            placeholder='Write your post...'
-            className='w-full p-4 rounded-md shadow-sm bg-primary/10 text-primary placeholder:text-primary-foreground'
-          />
-          <div className='mt-4'>
-            <button
-              onClick={editingPost ? updatePost : addPost}
-              className='px-6 py-2 text-white rounded-md bg-primary'
-            >
+          <div className='max-w-xl mx-auto'>
+            <textarea
+              value={newText}
+              onChange={(e) => setNewText(e.target.value)}
+              placeholder='What’s on your mind?'
+              className='w-full p-3 font-medium border rounded-lg text-secondary'
+            />
+            <div className='mt-4'>
               {isLoading ? (
                 <LoadingSpinner />
-              ) : editingPost ? (
-                'Update Post'
               ) : (
-                'Post'
+                <>
+                  {editingPost ? (
+                    <button
+                      onClick={updatePost}
+                      className='w-full px-6 py-2 text-sm font-semibold rounded-lg bg-primary text-primary-foreground'
+                    >
+                      Update Post
+                    </button>
+                  ) : (
+                    <button
+                      onClick={addPost}
+                      className='w-full px-6 py-2 text-sm font-semibold rounded-lg bg-primary text-primary-foreground'
+                    >
+                      Add Post
+                    </button>
+                  )}
+                </>
               )}
-            </button>
+            </div>
           </div>
         </div>
       </div>
