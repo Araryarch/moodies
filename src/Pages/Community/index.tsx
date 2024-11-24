@@ -17,10 +17,6 @@ interface AlertProps {
   type: 'success' | 'error'
 }
 
-// interface UserMetadata {
-//   username: string
-// }
-
 // Initialize Supabase
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_ANON_KEY
@@ -53,7 +49,7 @@ const Community = () => {
   const [alert, setAlert] = useState<AlertProps | null>(null)
   const [editingPost, setEditingPost] = useState<Post | null>(null) // For editing posts
   const [user, setUser] = useState<User | null>(null) // Store user info if logged in
-  const [username, setUsername] = useState<string>('') // Store username from the profiles table
+  const [username, setUsername] = useState<string>('') // Store username from metadata or profiles table
 
   // Show alert helper
   const showAlert = (message: string, type: 'success' | 'error') => {
@@ -95,16 +91,25 @@ const Community = () => {
   useEffect(() => {
     const fetchUsername = async () => {
       if (user?.id) {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('full_name')
-          .eq('id', user.id)
-          .single()
+        // Try to fetch the username from user metadata
+        const metadataUsername =
+          user.user_metadata?.full_name || user.user_metadata?.username
 
-        if (error) {
-          console.error('Error fetching username', error)
-        } else if (data) {
-          setUsername(data.full_name || 'anonymous')
+        if (metadataUsername) {
+          setUsername(metadataUsername)
+        } else {
+          // If no metadata is found, fallback to the 'profiles' table
+          const { data, error } = await supabase
+            .from('profiles')
+            .select('full_name')
+            .eq('id', user.id)
+            .single()
+
+          if (error) {
+            console.error('Error fetching username from profiles table', error)
+          } else if (data) {
+            setUsername(data.full_name || 'anonymous')
+          }
         }
       }
     }
@@ -190,7 +195,7 @@ const Community = () => {
         imageUrl = await uploadImage(image)
       }
 
-      // Use the username from the profiles table
+      // Use the username from the profiles table or metadata
       const sender = username || 'anonymous'
 
       const updatedPost = {
@@ -256,13 +261,15 @@ const Community = () => {
             {posts.map((post) => (
               <div
                 key={post.id}
-                className='p-4 transition duration-300 rounded-lg shadow-lg bg-card text-card-foreground'
+                className='p-4 border rounded-lg shadow-sm bg-secondary'
               >
-                <div className='font-semibold'>{post.sender}</div>
-                <div className='text-sm text-secondary-foreground'>
-                  {new Date(post.timestamp).toLocaleString()}
+                <div className='flex justify-between'>
+                  <h3 className='font-semibold'>{post.sender}</h3>
+                  <span className='text-xs text-muted'>
+                    {new Date(post.timestamp).toLocaleString()}
+                  </span>
                 </div>
-                <div className='mt-4'>{post.text}</div>
+                <p className='mt-2'>{post.text}</p>
                 {post.image_url && (
                   <img
                     src={post.image_url}
