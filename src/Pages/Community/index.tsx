@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@supabase/supabase-js'
+import Navbar from '../../components/ui/Navbar'
+import Footer from '../../components/ui/Footer'
 
 // Interface definitions
 interface Post {
@@ -24,7 +26,9 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey)
 const Alert: React.FC<AlertProps> = ({ message, type }) => (
   <div
     className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg ${
-      type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+      type === 'success'
+        ? 'bg-primary text-primary-foreground'
+        : 'bg-destructive text-destructive-foreground'
     }`}
   >
     {message}
@@ -33,7 +37,7 @@ const Alert: React.FC<AlertProps> = ({ message, type }) => (
 
 // Loading Spinner Component
 const LoadingSpinner = () => (
-  <div className='w-5 h-5 border-2 border-blue-500 rounded-full animate-spin border-t-transparent' />
+  <div className='w-5 h-5 border-2 rounded-full border-primary animate-spin border-t-transparent' />
 )
 
 const Community = () => {
@@ -200,82 +204,90 @@ const Community = () => {
   }, [fetchPosts]) // Dependency array now contains `fetchPosts`, which is stable
 
   return (
-    <div className='flex flex-col min-h-screen text-gray-900 bg-gray-100'>
-      {alert && <Alert {...alert} />}
+    <main className='w-full min-h-screen bg-background text-foreground'>
+      <Navbar />
+      <div className='flex flex-col min-h-screen pt-24'>
+        {alert && <Alert {...alert} />}
 
-      <div className='flex-1 p-6'>
-        <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
-          {posts.map((post) => (
-            <div
-              key={post.id}
-              className='p-4 transition duration-300 bg-white rounded-lg shadow-lg hover:shadow-xl'
-            >
-              <div className='font-semibold'>{post.sender}</div>
-              <div className='text-sm text-gray-500'>
-                {new Date(post.timestamp).toLocaleString()}
+        <div className='flex-1 p-6'>
+          <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
+            {posts.map((post) => (
+              <div
+                key={post.id}
+                className='p-4 transition duration-300 rounded-lg shadow-lg bg-card text-card-foreground'
+              >
+                <div className='font-semibold'>{post.sender}</div>
+                <div className='text-sm text-secondary-foreground'>
+                  {new Date(post.timestamp).toLocaleString()}
+                </div>
+                <div className='mt-4'>{post.text}</div>
+                {post.image_url && (
+                  <img
+                    src={post.image_url}
+                    alt='Post Image'
+                    className='object-cover w-full h-64 mt-4 rounded-lg'
+                  />
+                )}
+                <div className='flex justify-between mt-4'>
+                  <button
+                    onClick={() => editPost(post)}
+                    className='text-primary hover:text-primary-foreground'
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => deletePost(post.id)}
+                    className='text-destructive hover:text-destructive-foreground'
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
-              <div className='mt-4'>{post.text}</div>
-              {post.image_url && (
-                <img
-                  src={post.image_url}
-                  alt='Post Image'
-                  className='object-cover w-full h-64 mt-4 rounded-lg'
-                />
-              )}
-              <div className='flex justify-between mt-4'>
-                <button
-                  onClick={() => editPost(post)}
-                  className='text-blue-500 hover:text-blue-700'
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => deletePost(post.id)}
-                  className='text-red-500 hover:text-red-700'
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div className='p-6 bg-white border-t border-gray-300'>
-        <div className='max-w-2xl mx-auto'>
-          <textarea
-            value={newText}
-            onChange={(e) => setNewText(e.target.value)}
-            placeholder='Write a post...'
-            className='w-full h-24 p-4 text-gray-900 bg-gray-100 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
-          />
-          <div className='mt-4'>
-            <input
-              type='file'
-              onChange={(e) =>
-                setImage(e.target.files ? e.target.files[0] : null)
-              }
-              className='w-full p-2 border rounded-lg'
+        <div className='p-6 border-t border-secondary bg-secondary'>
+          <div className='max-w-2xl mx-auto'>
+            <textarea
+              value={newText}
+              onChange={(e) => setNewText(e.target.value)}
+              placeholder='Write a post...'
+              className='w-full h-24 p-4 border rounded-lg text-foreground bg-input focus:outline-none focus:ring-2 focus:ring-ring'
             />
-          </div>
-          <div className='flex justify-end mt-4'>
-            <button
-              onClick={editingPost ? updatePost : addPost}
-              disabled={isLoading}
-              className='w-full px-4 py-2 text-white bg-blue-500 rounded-lg disabled:bg-gray-300'
-            >
-              {isLoading ? (
-                <LoadingSpinner />
-              ) : editingPost ? (
-                'Update Post'
-              ) : (
-                'Post'
-              )}
-            </button>
+            <div className='mt-4'>
+              <input
+                type='file'
+                onChange={(e) =>
+                  setImage(e.target.files ? e.target.files[0] : null)
+                }
+                className='w-full p-2 border rounded-lg'
+              />
+            </div>
+            <div className='mt-4'>
+              <button
+                onClick={editingPost ? updatePost : addPost}
+                disabled={isLoading}
+                className={`w-full px-6 py-3 text-white rounded-lg ${
+                  isLoading
+                    ? 'bg-muted'
+                    : 'bg-primary hover:bg-primary-foreground'
+                }`}
+              >
+                {isLoading ? (
+                  <LoadingSpinner />
+                ) : editingPost ? (
+                  'Update Post'
+                ) : (
+                  'Post'
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+      <Footer />
+    </main>
   )
 }
 
