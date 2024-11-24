@@ -1,36 +1,35 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { createClient } from '@supabase/supabase-js'
+import { useAuthStore } from '../../lib/jwtToken'
 
-// Setup Supabase client using environment variables
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseKey = import.meta.env.VITE_ANON_KEY
 const supabase = createClient(supabaseUrl, supabaseKey)
 
 const Auth = () => {
-  const { type } = useParams() // 'signin' or 'signup'
+  const { type } = useParams()
   const navigate = useNavigate()
+
+  const { setJwtToken } = useAuthStore()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [fullName, setFullName] = useState('') // New field for full name
-  const [error, setError] = useState<string | null>(null) // type error as string or null
+  const [fullName, setFullName] = useState('')
+  const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const [checkingUser, setCheckingUser] = useState(true) // Flag to prevent redirection before checking user
-  const [showConfirmationMessage, setShowConfirmationMessage] = useState(false) // Flag to show confirmation message after signup
-  const [userName, setUserName] = useState<string | null>(null) // Store logged-in user's name
-  const [jwtToken, setJwtToken] = useState<string | null>(null) // Store JWT token
+  const [checkingUser, setCheckingUser] = useState(true)
+  const [showConfirmationMessage, setShowConfirmationMessage] = useState(false)
+  const [userName, setUserName] = useState<string | null>(null)
 
   useEffect(() => {
     const checkUser = async () => {
       try {
         const {
           data: { user }
-        } = await supabase.auth.getUser() // Getting current user
+        } = await supabase.auth.getUser()
 
-        // Redirect only after user is checked
         if (user) {
-          // Fetch the user's profile if logged in
           const { data: profile } = await supabase
             .from('profiles')
             .select('full_name')
@@ -38,19 +37,19 @@ const Auth = () => {
             .single()
 
           if (profile) {
-            setUserName(profile.full_name) // Store the user's name
+            setUserName(profile.full_name)
           }
 
           if (user.email_confirmed_at) {
-            navigate('/') // Redirect to homepage if email is confirmed
+            navigate('/')
           } else {
             setShowConfirmationMessage(true)
           }
         } else {
-          setCheckingUser(false) // Mark as done checking user
+          setCheckingUser(false)
         }
       } catch {
-        setCheckingUser(false) // In case of error, mark as done checking user
+        setCheckingUser(false)
         setError('An error occurred while checking user status.')
       }
     }
@@ -71,33 +70,25 @@ const Auth = () => {
       } else if (type === 'signup') {
         response = await supabase.auth.signUp({ email, password })
 
-        // After sign-up, insert user data into 'profiles' table
         if (response?.data?.user) {
-          const { data, error } = await supabase
+          const { error } = await supabase
             .from('profiles')
             .insert([{ id: response.data.user.id, email, full_name: fullName }])
 
-          if (error) {
-            setError(error.message)
-          } else {
-            console.log('User profile created:', data)
-          }
+          if (error) setError(error.message)
+          setShowConfirmationMessage(true)
         }
-
-        // Set show confirmation message after successful signup
-        setShowConfirmationMessage(true)
       }
 
       if (response?.error) {
         setError(response.error.message)
       } else {
-        // After successful login/signup, get session and extract JWT token
         const session = await supabase.auth.getSession()
-        const token = session.data?.session?.access_token // Get the JWT token
+        const token = session.data?.session?.access_token
 
         if (token) {
-          setJwtToken(token) // Save JWT token in state
-          console.log('JWT Token:', token) // You can use this token in your API requests
+          setJwtToken(token)
+          console.log('JWT Token:', token)
         }
 
         setLoading(false)
@@ -113,30 +104,66 @@ const Auth = () => {
     }
   }
 
-  // Function to use JWT for making authenticated requests
-  const fetchDataWithJWT = async () => {
-    if (!jwtToken) {
-      setError('No JWT token available')
-      return
-    }
+  const handleOAuthLogin = async (provider: 'google' | 'github') => {
+    setLoading(true)
+    setError(null)
 
     try {
-      const response = await fetch('https://api.example.com/protected', {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${jwtToken}` // Send JWT in Authorization header
-        }
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider
       })
 
-      const data = await response.json()
-      console.log('Fetched data:', data)
-    } catch (error) {
-      console.error('Error fetching data:', error)
+      if (error) {
+        setError(error.message)
+        setLoading(false)
+        return
+      }
+
+      const session = await supabase.auth.getSession()
+
+      if (session.data?.session) {
+        const token = session.data.session.access_token
+
+        if (token) {
+          setJwtToken(token)
+          console.log('JWT Token:', token)
+        }
+
+        navigate('/')
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message)
+      } else {
+        setError('An unknown error occurred')
+      }
+    } finally {
+      setLoading(false)
     }
   }
 
+  useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        // Remove 'event' parameter
+        if (session?.user) {
+          const token = session.access_token
+          setJwtToken(token)
+          console.log('JWT Token:', token)
+          navigate('/')
+        }
+      }
+    )
+
+    // Properly unsubscribe when the component is unmounted
+    return () => {
+      if (authListener?.subscription) {
+        authListener.subscription.unsubscribe()
+      }
+    }
+  }, [navigate, setJwtToken])
+
   if (checkingUser) {
-    // Render a loading state or nothing while checking the user status
     return <div>Loading...</div>
   }
 
@@ -198,12 +225,10 @@ const Auth = () => {
             />
           </div>
 
-          {/* Show error if any */}
           {error && !showConfirmationMessage && (
             <div className='mb-4 text-sm text-red-500'>{error}</div>
           )}
 
-          {/* Show confirmation message if signup is successful */}
           {showConfirmationMessage && (
             <div className='mb-4 text-sm text-green-500'>
               Please check your inbox for the confirmation email to verify your
@@ -211,11 +236,8 @@ const Auth = () => {
             </div>
           )}
 
-          {/* Show welcome message if the user is logged in */}
           {userName && !showConfirmationMessage && (
-            <div className='mb-4 text-sm text-green-500'>
-              Welcome, {userName}!
-            </div>
+            <div className='mb-4 text-sm text-green-500'>Hi, {userName}!</div>
           )}
 
           <button
@@ -225,16 +247,27 @@ const Auth = () => {
           >
             {loading ? 'Loading...' : type === 'signin' ? 'Sign In' : 'Sign Up'}
           </button>
-        </form>
 
-        {jwtToken && !showConfirmationMessage && (
-          <button
-            onClick={fetchDataWithJWT}
-            className='w-full px-4 py-2 mt-4 font-semibold text-white bg-green-500 rounded-md hover:bg-green-600'
-          >
-            Fetch Protected Data
-          </button>
-        )}
+          <div className='mt-4 text-center'>
+            <button
+              type='button'
+              onClick={() => handleOAuthLogin('google')}
+              disabled={loading}
+              className='w-full px-4 py-2 mt-2 font-semibold text-white bg-red-500 rounded-md hover:bg-red-600 disabled:bg-red-400'
+            >
+              {loading ? 'Loading...' : 'Login with Google'}
+            </button>
+
+            <button
+              type='button'
+              onClick={() => handleOAuthLogin('github')}
+              disabled={loading}
+              className='w-full px-4 py-2 mt-2 font-semibold text-white bg-black rounded-md hover:bg-gray-800 disabled:bg-gray-600'
+            >
+              {loading ? 'Loading...' : 'Login with GitHub'}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   )

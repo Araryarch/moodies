@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { createClient } from '@supabase/supabase-js'
+import { createClient, User } from '@supabase/supabase-js'
 import Navbar from '../../components/ui/Navbar'
 import Footer from '../../components/ui/Footer'
 
@@ -16,6 +16,10 @@ interface AlertProps {
   message: string
   type: 'success' | 'error'
 }
+
+// interface UserMetadata {
+//   username: string
+// }
 
 // Initialize Supabase
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
@@ -48,6 +52,8 @@ const Community = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [alert, setAlert] = useState<AlertProps | null>(null)
   const [editingPost, setEditingPost] = useState<Post | null>(null) // For editing posts
+  const [user, setUser] = useState<User | null>(null) // Store user info if logged in
+  const [username, setUsername] = useState<string>('') // Store username from the profiles table
 
   // Show alert helper
   const showAlert = (message: string, type: 'success' | 'error') => {
@@ -71,14 +77,47 @@ const Community = () => {
     } finally {
       setIsLoading(false)
     }
-  }, []) // Memoize fetchPosts to prevent unnecessary re-creations
+  }, [])
 
-  // Image handling
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data, error } = await supabase.auth.getUser()
+      if (error) {
+        console.error('Error fetching user', error)
+      } else {
+        setUser(data.user)
+      }
+    }
+
+    fetchUser()
+  }, [])
+
+  useEffect(() => {
+    const fetchUsername = async () => {
+      if (user?.id) {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', user.id)
+          .single()
+
+        if (error) {
+          console.error('Error fetching username', error)
+        } else if (data) {
+          setUsername(data.full_name || 'anonymous')
+        }
+      }
+    }
+
+    if (user) {
+      fetchUsername()
+    }
+  }, [user])
+
   const clearImage = () => {
     setImage(null)
   }
 
-  // Upload image
   const uploadImage = async (file: File): Promise<string | null> => {
     const fileName = `${Date.now()}-${file.name}`
     const { error } = await supabase.storage
@@ -92,7 +131,6 @@ const Community = () => {
     return urlData?.publicUrl || null
   }
 
-  // Add post
   const addPost = async () => {
     if (!newText.trim() && !image) {
       showAlert('Please add some text or an image', 'error')
@@ -106,9 +144,11 @@ const Community = () => {
         imageUrl = await uploadImage(image)
       }
 
+      const sender = username || 'anonymous'
+
       const post = {
         text: newText.trim(),
-        sender: 'You',
+        sender: sender,
         timestamp: new Date().toISOString(),
         image_url: imageUrl
       }
@@ -137,7 +177,6 @@ const Community = () => {
     }
   }
 
-  // Update post
   const updatePost = async () => {
     if (!newText.trim() && !image) {
       showAlert('Please add some text or an image', 'error')
@@ -151,9 +190,12 @@ const Community = () => {
         imageUrl = await uploadImage(image)
       }
 
+      // Use the username from the profiles table
+      const sender = username || 'anonymous'
+
       const updatedPost = {
         text: newText.trim(),
-        sender: 'You',
+        sender: sender,
         timestamp: new Date().toISOString(),
         image_url: imageUrl || editingPost?.image_url
       }
@@ -255,15 +297,6 @@ const Community = () => {
               placeholder='Write a post...'
               className='w-full h-24 p-4 border rounded-lg text-foreground bg-input focus:outline-none focus:ring-2 focus:ring-ring'
             />
-            {/* <div className='mt-4'>
-              <input
-                type='file'
-                onChange={(e) =>
-                  setImage(e.target.files ? e.target.files[0] : null)
-                }
-                className='w-full p-2 border rounded-lg'
-              />
-            </div> */}
             <div className='mt-4'>
               <button
                 onClick={editingPost ? updatePost : addPost}

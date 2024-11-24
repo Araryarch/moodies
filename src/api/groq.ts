@@ -8,11 +8,6 @@ export type ChatMessage = {
 export async function fetchChatCompletion(
   messages: ChatMessage[]
 ): Promise<string> {
-  const groq = new Groq({
-    dangerouslyAllowBrowser: true,
-    apiKey: import.meta.env.VITE_GROQ_APIKEY
-  })
-
   const systemMessage: ChatMessage = {
     role: 'system',
     content: `Kamu adalah AI yang bernama Moodies, yang dapat mengecek mood seseorang berdasarkan percakapan.
@@ -26,15 +21,25 @@ export async function fetchChatCompletion(
   const messagesWithSystem =
     messages.length > 0 ? [systemMessage, ...messages] : [systemMessage]
 
-  const chatCompletion = await groq.chat.completions.create({
-    messages: messagesWithSystem,
-    model: 'llama-3.2-90b-vision-preview',
-    temperature: 1,
-    max_tokens: 1024,
-    top_p: 1,
-    stream: false,
-    stop: null
+  const groq = new Groq({
+    dangerouslyAllowBrowser: true,
+    apiKey: import.meta.env.VITE_GROQ_APIKEY
   })
 
-  return chatCompletion.choices[0]?.message?.content || ''
+  try {
+    const chatCompletion = await groq.chat.completions.create({
+      messages: messagesWithSystem,
+      model: 'llama-3.2-90b-vision-preview',
+      temperature: 1,
+      max_tokens: 1024,
+      top_p: 1,
+      stream: false,
+      stop: null
+    })
+
+    return chatCompletion.choices[0]?.message?.content || ''
+  } catch (error) {
+    console.error('Error fetching chat completion:', error)
+    throw new Error('Failed to fetch chat completion.')
+  }
 }
