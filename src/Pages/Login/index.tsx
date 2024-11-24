@@ -75,7 +75,10 @@ const Auth = () => {
             .from('profiles')
             .insert([{ id: response.data.user.id, email, full_name: fullName }])
 
-          if (error) setError(error.message)
+          if (error) {
+            setError(error.message)
+            return
+          }
           setShowConfirmationMessage(true)
         }
       }
@@ -91,7 +94,7 @@ const Auth = () => {
           console.log('JWT Token:', token)
         }
 
-        setLoading(false)
+        navigate('/')
       }
     } catch (err: unknown) {
       if (err instanceof Error) {
