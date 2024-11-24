@@ -104,7 +104,7 @@ const Auth = () => {
     }
   }
 
-  const handleOAuthLogin = async (provider: 'google' | 'github') => {
+  const handleOAuthLogin = async (provider: 'github') => {
     setLoading(true)
     setError(null)
 
@@ -251,15 +251,6 @@ const Auth = () => {
           </button>
 
           <div className='mt-4 text-center'>
-            <button
-              type='button'
-              onClick={() => handleOAuthLogin('google')}
-              disabled={loading}
-              className='w-full px-4 py-2 mt-2 font-semibold text-white bg-red-500 rounded-md hover:bg-red-600 disabled:bg-red-400'
-            >
-              {loading ? 'Loading...' : 'Login with Google'}
-            </button>
-
             <button
               type='button'
               onClick={() => handleOAuthLogin('github')}
