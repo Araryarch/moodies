@@ -4,7 +4,22 @@ const Footer = () => {
       <a href='https://github.com/Araryarch/Moodies'>
         <h1>moodies: 2024</h1>
       </a>
-      <h1>BY: ARARYA AND THIYA</h1>
+      <h1>
+        BY:{' '}
+        <a
+          href='https://github.com/Araryarch'
+          className='cursor-pointer'
+        >
+          ARARYA
+        </a>{' '}
+        AND{' '}
+        <a
+          href='https://github.com/FHPeople'
+          className='cursor-pointer'
+        >
+          THIYA
+        </a>
+      </h1>
     </div>
   )
 }

@@ -158,13 +158,15 @@ const Community = () => {
         image_url: imageUrl
       }
 
-      const { data, error } = await supabase.from('posts').insert([post])
+      const { error } = await supabase.from('posts').insert([post])
       if (error) throw error
 
-      setPosts([...(data || []), ...posts])
       setNewText('')
       clearImage()
       showAlert('Post created successfully!', 'success')
+
+      // Fetch posts again to reflect the new post
+      fetchPosts()
     } catch (err) {
       showAlert(`Failed to create post: ${err}`, 'error')
     } finally {
@@ -174,6 +176,11 @@ const Community = () => {
 
   // Edit post
   const editPost = (post: Post) => {
+    if (post.sender !== username) {
+      showAlert('You can only edit your own posts.', 'error')
+      return
+    }
+
     setEditingPost(post)
     setNewText(post.text)
     if (post.image_url) {
@@ -212,15 +219,13 @@ const Community = () => {
 
       if (error) throw error
 
-      setPosts(
-        posts.map((post) =>
-          post.id === editingPost?.id ? { ...post, ...updatedPost } : post
-        )
-      )
       setEditingPost(null)
       setNewText('')
       clearImage()
       showAlert('Post updated successfully!', 'success')
+
+      // Fetch posts again to reflect the updated post
+      fetchPosts()
     } catch (err) {
       showAlert(`Failed to update post: ${err}`, 'error')
     } finally {
@@ -237,8 +242,10 @@ const Community = () => {
       const { error } = await supabase.from('posts').delete().eq('id', id)
       if (error) throw error
 
-      setPosts(posts.filter((post) => post.id !== id))
       showAlert('Post deleted successfully!', 'success')
+
+      // Fetch posts again to reflect the deletion
+      fetchPosts()
     } catch {
       showAlert('Failed to delete post', 'error')
     } finally {
@@ -248,7 +255,7 @@ const Community = () => {
 
   useEffect(() => {
     fetchPosts()
-  }, [fetchPosts]) // Dependency array now contains `fetchPosts`, which is stable
+  }, [fetchPosts])
 
   return (
     <main className='w-full min-h-screen bg-background text-foreground'>
@@ -296,32 +303,36 @@ const Community = () => {
           </div>
         </div>
 
-        <div className='p-6 border-t border-secondary bg-secondary'>
-          <div className='max-w-2xl mx-auto'>
+        <div className='p-6'>
+          <div className='max-w-xl mx-auto'>
             <textarea
               value={newText}
               onChange={(e) => setNewText(e.target.value)}
-              placeholder='Write a post...'
-              className='w-full h-24 p-4 border rounded-lg text-foreground bg-input focus:outline-none focus:ring-2 focus:ring-ring'
+              placeholder='What’s on your mind?'
+              className='w-full p-3 font-medium border rounded-lg text-secondary'
             />
             <div className='mt-4'>
-              <button
-                onClick={editingPost ? updatePost : addPost}
-                disabled={isLoading}
-                className={`w-full px-6 py-3 text-white rounded-lg ${
-                  isLoading
-                    ? 'bg-muted'
-                    : 'bg-primary hover:bg-primary-foreground'
-                }`}
-              >
-                {isLoading ? (
-                  <LoadingSpinner />
-                ) : editingPost ? (
-                  'Update Post'
-                ) : (
-                  'Post'
-                )}
-              </button>
+              {isLoading ? (
+                <LoadingSpinner />
+              ) : (
+                <>
+                  {editingPost ? (
+                    <button
+                      onClick={updatePost}
+                      className='w-full px-6 py-2 text-sm font-semibold rounded-lg bg-primary text-primary-foreground'
+                    >
+                      Update Post
+                    </button>
+                  ) : (
+                    <button
+                      onClick={addPost}
+                      className='w-full px-6 py-2 text-sm font-semibold rounded-lg bg-primary text-primary-foreground'
+                    >
+                      Add Post
+                    </button>
+                  )}
+                </>
+              )}
             </div>
           </div>
         </div>
