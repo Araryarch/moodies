@@ -39,26 +39,19 @@ const Navbar = () => {
   const [userName, setUserName] = useState<string | null>(null)
 
   useEffect(() => {
+    // Fetch the authenticated user
     const fetchUser = async () => {
       const {
         data: { user }
       } = await supabase.auth.getUser()
 
       if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('full_name')
-          .eq('id', user.id)
-          .single()
-
-        if (profile) {
-          setUserName(profile.full_name)
-        }
+        setUserName(user.user_metadata?.full_name || user.email)
       }
     }
 
     fetchUser()
-  }, []) // This effect will run when the component mounts or when user changes
+  }, []) // This effect will run when the component mounts
 
   useEffect(() => {
     const interval = setInterval(() => {
