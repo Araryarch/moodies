@@ -152,13 +152,20 @@ const SkeletonLoading = () => {
         .map((_, index) => (
           <div
             key={index}
-            className='overflow-hidden bg-white rounded-lg shadow-lg animate-pulse'
+            className='overflow-hidden rounded-lg shadow-lg bg-background animate-pulse'
           >
+            {/* Image Skeleton */}
             <div className='w-full h-48 bg-gray-300'></div>
             <div className='p-4'>
-              <div className='h-6 mb-2 bg-gray-300 rounded'></div>
-              <div className='h-4 mb-2 bg-gray-300 rounded'></div>
-              <div className='w-3/4 h-4 mb-2 bg-gray-300 rounded'></div>
+              {/* Title Skeleton */}
+              <div className='w-3/4 h-6 mb-2 bg-gray-400 rounded'></div>
+              {/* Synopsis Skeleton */}
+              <div className='w-5/6 h-4 mb-2 bg-gray-300 rounded'></div>
+              {/* Rating Skeleton */}
+              <div className='flex items-center justify-between mt-4'>
+                <div className='w-1/4 h-4 bg-gray-300 rounded'></div>
+                <div className='w-1/4 h-4 bg-gray-300 rounded'></div>
+              </div>
             </div>
           </div>
         ))}
