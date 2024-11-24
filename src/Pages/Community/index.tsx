@@ -255,7 +255,7 @@ const Community = () => {
               placeholder='Write a post...'
               className='w-full h-24 p-4 border rounded-lg text-foreground bg-input focus:outline-none focus:ring-2 focus:ring-ring'
             />
-            <div className='mt-4'>
+            {/* <div className='mt-4'>
               <input
                 type='file'
                 onChange={(e) =>
@@ -263,7 +263,7 @@ const Community = () => {
                 }
                 className='w-full p-2 border rounded-lg'
               />
-            </div>
+            </div> */}
             <div className='mt-4'>
               <button
                 onClick={editingPost ? updatePost : addPost}
