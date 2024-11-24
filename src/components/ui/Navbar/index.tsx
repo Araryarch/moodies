@@ -58,7 +58,7 @@ const Navbar = () => {
     }
 
     fetchUser()
-  }, [])
+  }, []) // This effect will run when the component mounts or when user changes
 
   useEffect(() => {
     const interval = setInterval(() => {

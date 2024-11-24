@@ -129,6 +129,29 @@ const Auth = () => {
           console.log('JWT Token:', token)
         }
 
+        // Check if the user exists in the 'profiles' table, if not, create a profile
+        const user = session.data.session.user
+        const { data: existingProfile } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('id', user?.id)
+          .single()
+
+        if (!existingProfile) {
+          // If the user doesn't have a profile, create one
+          const { error } = await supabase.from('profiles').insert([
+            {
+              id: user?.id,
+              email: user?.email,
+              full_name: user?.user_metadata?.full_name || 'Unknown'
+            }
+          ])
+
+          if (error) {
+            setError(error.message)
+          }
+        }
+
         navigate('/')
       }
     } catch (err) {
@@ -141,27 +164,6 @@ const Auth = () => {
       setLoading(false)
     }
   }
-
-  useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        // Remove 'event' parameter
-        if (session?.user) {
-          const token = session.access_token
-          setJwtToken(token)
-          console.log('JWT Token:', token)
-          navigate('/')
-        }
-      }
-    )
-
-    // Properly unsubscribe when the component is unmounted
-    return () => {
-      if (authListener?.subscription) {
-        authListener.subscription.unsubscribe()
-      }
-    }
-  }, [navigate, setJwtToken])
 
   if (checkingUser) {
     return <div>Loading...</div>
